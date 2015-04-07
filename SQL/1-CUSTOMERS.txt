@@ -1,0 +1,29 @@
+CREATE table "CUSTOMERS" (
+    "CUSTOMER_NUM"    NUMBER NOT NULL,
+    "CUSTOMER_FNAME"  VARCHAR2(32) NOT NULL,
+    "CUSTOMER_LNAME"  VARCHAR2(32),
+    "CUSTOMER_ID"     NUMBER NOT NULL,
+    "CUSTOMER_STREET" VARCHAR2(64),
+    "CUSTOMER_CITY"   VARCHAR2(32),
+    "CUSTOMER_PHONE"  VARCHAR2(32),
+    constraint  "CUSTOMERS_PK" primary key ("CUSTOMER_NUM")
+)
+/
+
+CREATE sequence "CUSTOMERS_SEQ" 
+/
+
+CREATE trigger "BI_CUSTOMERS"  
+  before insert on "CUSTOMERS"              
+  for each row 
+begin  
+  if :NEW."CUSTOMER_NUM" is null then
+    select "CUSTOMERS_SEQ".nextval into :NEW."CUSTOMER_NUM" from dual;
+  end if;
+end;
+/   
+
+alter table "CUSTOMERS" add
+constraint "CUSTOMERS_UK_ID" 
+unique ("CUSTOMER_ID")
+/   

@@ -1,0 +1,28 @@
+CREATE table "ORDERS" (
+    "ORDER_NUM"    NUMBER NOT NULL,
+    "ORDER_DATE"   DATE NOT NULL,
+    "CUSTOMER_NUM" NUMBER NOT NULL,
+    "ORDER_PRICE"  NUMBER NOT NULL,
+    "ORDER_STATUS" VARCHAR2(10) NOT NULL,
+    constraint  "ORDERS_PK" primary key ("ORDER_NUM")
+)
+/
+
+CREATE sequence "ORDERS_SEQ" 
+/
+
+CREATE trigger "BI_ORDERS"  
+  before insert on "ORDERS"              
+  for each row 
+begin  
+  if :NEW."ORDER_NUM" is null then
+    select "ORDERS_SEQ".nextval into :NEW."ORDER_NUM" from dual;
+  end if;
+end;
+/   
+
+ALTER TABLE "ORDERS" ADD CONSTRAINT "ORDERS_CUSTOMER_FK" 
+FOREIGN KEY ("CUSTOMER_NUM")
+REFERENCES "CUSTOMERS" ("CUSTOMER_NUM")
+
+/

@@ -1,0 +1,33 @@
+CREATE table "INVOICE" (
+    "INVOICE_NUM"   NUMBER NOT NULL,
+    "ORDER_NUM"     NUMBER NOT NULL,
+    "INVOICE_DATE"  DATE NOT NULL,
+    "CUSTOMER_NUM"  NUMBER NOT NULL,
+    "INVOICE_PRICE" NUMBER NOT NULL,
+    constraint  "INVOICE_PK" primary key ("INVOICE_NUM")
+)
+/
+
+CREATE sequence "INVOICE_SEQ" 
+/
+
+CREATE trigger "BI_INVOICE"  
+  before insert on "INVOICE"              
+  for each row 
+begin  
+  if :NEW."INVOICE_NUM" is null then
+    select "INVOICE_SEQ".nextval into :NEW."INVOICE_NUM" from dual;
+  end if;
+end;
+/   
+
+ALTER TABLE "INVOICE" ADD CONSTRAINT "INVOICE_ORDER_FK" 
+FOREIGN KEY ("ORDER_NUM")
+REFERENCES "ORDERS" ("ORDER_NUM")
+
+/
+ALTER TABLE "INVOICE" ADD CONSTRAINT "INVOICE_CUSTOMER_FK" 
+FOREIGN KEY ("CUSTOMER_NUM")
+REFERENCES "CUSTOMERS" ("CUSTOMER_NUM")
+
+/

@@ -1,0 +1,23 @@
+CREATE table "WAREHOUSES" (
+    "WH_NUM"     NUMBER NOT NULL,
+    "WH_NAME"    VARCHAR2(64) NOT NULL,
+    "WH_STREET"  VARCHAR2(64),
+    "WH_CITY"    VARCHAR2(32),
+    "WH_PHONE"   VARCHAR2(32),
+    constraint  "WAREHOUSES_PK" primary key ("WH_NUM")
+)
+/
+
+CREATE sequence "WAREHOUSES_SEQ" 
+/
+
+CREATE trigger "BI_WAREHOUSES"  
+  before insert on "WAREHOUSES"              
+  for each row 
+begin  
+  if :NEW."WH_NUM" is null then
+    select "WAREHOUSES_SEQ".nextval into :NEW."WH_NUM" from dual;
+  end if;
+end;
+/   
+

@@ -12,7 +12,7 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 
 import Database.OracleDB;
-import Model.Customer;
+import Model.*;
 import View.order.NewOrderPanel;
 
 
@@ -33,6 +33,7 @@ public class MainFrame extends JFrame {
 
 		initFrame();
 		
+		test();
 	}
 	
 	
@@ -115,7 +116,18 @@ public class MainFrame extends JFrame {
 	
 	public void newOrder(Customer c) {
 		db.addNewOrder(c);
-		changePanel(new NewOrderPanel(c, this));
+		changePanel(new NewOrderPanel(this));
+	}
+	
+	
+	//////////////////////////////////////////////////////////////////
+	
+	
+	private void test() {
+//		Customer c = db.getCustomerByNum(1);
+//		System.out.println(c);
+//		Order o = db.getOrderByNum(7);
+//		System.out.println(o);
 	}
 	
 }

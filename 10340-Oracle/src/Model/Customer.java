@@ -11,6 +11,7 @@ public class Customer {
 	private	String	city;
 	private String	phone;
 	
+
 	public Customer(int num, String fname, String lname, int id, String street,
 			String city, String phone) {
 		this.num = num;
@@ -21,6 +22,7 @@ public class Customer {
 		this.city = city;
 		this.phone = phone;
 	}
+	
 
 	public int getNum() {
 		return num;

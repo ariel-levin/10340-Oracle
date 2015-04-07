@@ -1,12 +1,12 @@
 package Database;
 
+import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-
 import javax.swing.JOptionPane;
 
 import Model.*;
@@ -17,14 +17,6 @@ public class OracleDB {
 	private Connection connection;
 	private String dbUrl;
 	
-	
-	public OracleDB() {
-		
-		
-		
-		
-	}
-		
 	
 	public void openConnection() {
 		
@@ -58,6 +50,250 @@ public class OracleDB {
 		}
 	}
 
+	public Customer getCustomerByNum(int customer_num) {
+		
+		Customer c = null;
+		
+		synchronized (connection) {
+			try {
+				String sqlQuery = "SELECT * FROM customers WHERE customer_num = ?";
+
+				PreparedStatement ps = connection.prepareStatement(sqlQuery);
+				
+				ps.setInt(1, customer_num);
+				
+				ResultSet rs = ps.executeQuery();
+				
+				if (!rs.next())
+					return c;
+				
+				String fname = rs.getString("customer_fname");
+				String lname = rs.getString("customer_lname");
+				int id = rs.getInt("customer_id");
+				String street = rs.getString("customer_street");
+				String city = rs.getString("customer_city");
+				String phone = rs.getString("customer_phone");
+				
+				c = new Customer(customer_num, fname, lname, id, street, city, phone);
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return c;
+	}
+
+	public Warehouse getWarehouseByNum(int wh_num) {
+		
+		Warehouse wh = null;
+		
+		synchronized (connection) {
+			try {
+				String sqlQuery = "SELECT * FROM warehouses WHERE wh_num = ?";
+
+				PreparedStatement ps = connection.prepareStatement(sqlQuery);
+				
+				ps.setInt(1, wh_num);
+				
+				ResultSet rs = ps.executeQuery();
+				
+				if (!rs.next())
+					return wh;
+				
+				String name = rs.getString("wh_name");
+				String street = rs.getString("wh_street");
+				String city = rs.getString("wh_city");
+				String phone = rs.getString("wh_phone");
+				
+				wh = new Warehouse(wh_num, name, street, city, phone);
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return wh;
+	}
+
+	public Item getItemByNum(int item_num) {
+		
+		Item item = null;
+		
+		synchronized (connection) {
+			try {
+				String sqlQuery = "SELECT * FROM items WHERE item_num = ?";
+
+				PreparedStatement ps = connection.prepareStatement(sqlQuery);
+				
+				ps.setInt(1, item_num);
+				
+				ResultSet rs = ps.executeQuery();
+				
+				if (!rs.next())
+					return item;
+				
+				String name = rs.getString("item_name");
+				String desc = rs.getString("item_desc");
+				float price = rs.getFloat("item_price");
+				Blob img = rs.getBlob("item_img");
+				
+				int wh_num = rs.getInt("wh_num");
+				Warehouse wh = getWarehouseByNum(wh_num);
+				
+				item = new Item(item_num, name, desc, price, img, wh);
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return item;
+	}
+		
+	public Order getOrderByNum(int order_num) {
+		
+		Order order = null;
+		
+		synchronized (connection) {
+			try {
+				String sqlQuery = "SELECT * FROM orders WHERE order_num = ?";
+
+				PreparedStatement ps = connection.prepareStatement(sqlQuery);
+				
+				ps.setInt(1, order_num);
+				
+				ResultSet rs = ps.executeQuery();
+				
+				if (!rs.next())
+					return order;
+				
+				java.sql.Date date = rs.getDate("order_date");
+				
+				int customer_num = rs.getInt("customer_num");
+				Customer customer = getCustomerByNum(customer_num);
+				
+				float price = rs.getFloat("order_price");
+				String status = rs.getString("order_status");
+				
+				order = new Order(order_num, date, customer, price, status);
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			
+			try {
+				String sqlQuery = "SELECT * FROM orders_lines "
+						+ "WHERE order_num = ?"
+						+ "ORDER BY line_num ASC";
+
+				PreparedStatement ps = connection.prepareStatement(sqlQuery);
+				
+				ps.setInt(1, order_num);
+				
+				ResultSet rs = ps.executeQuery();
+				
+				while (rs.next()) {
+					
+					int num = rs.getInt("line_num");
+					
+					int item_num = rs.getInt("item_num");
+					Item item = getItemByNum(item_num);
+					
+					int quantity = rs.getInt("line_quantity");
+					float price = rs.getFloat("line_price");
+					int discount = rs.getInt("line_discount");
+					float finalPrice = rs.getFloat("line_final_price");
+					
+					order.addLine( new OrderLine(num, item, quantity, price, discount, finalPrice) );
+					
+				}
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return order;
+	}
+	
+	public Invoice getInvoiceByNum(int invoice_num) {
+		
+		Invoice inv = null;
+		
+		synchronized (connection) {
+			try {
+				String sqlQuery = "SELECT * FROM invoice WHERE invoice_num = ?";
+
+				PreparedStatement ps = connection.prepareStatement(sqlQuery);
+				
+				ps.setInt(1, invoice_num);
+				
+				ResultSet rs = ps.executeQuery();
+				
+				if (!rs.next())
+					return inv;
+				
+				int order_num = -1;
+				
+				try {
+					order_num = rs.getInt("order_num");
+				} catch (Exception e) {}
+				
+				Order order = null;
+				
+				if (order_num != -1)
+					order = getOrderByNum(order_num);
+				
+				
+				java.sql.Date date = rs.getDate("invoice_date");
+				
+				int customer_num = rs.getInt("customer_num");
+				Customer customer = getCustomerByNum(customer_num);
+				
+				float price = rs.getFloat("invoice_price");
+				
+				inv = new Invoice(invoice_num, order, date, customer, price);
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			
+			try {
+				String sqlQuery = "SELECT * FROM invoice_lines "
+						+ "WHERE invoice_num = ?"
+						+ "ORDER BY line_num ASC";
+
+				PreparedStatement ps = connection.prepareStatement(sqlQuery);
+				
+				ps.setInt(1, invoice_num);
+				
+				ResultSet rs = ps.executeQuery();
+				
+				while (rs.next()) {
+					
+					int num = rs.getInt("line_num");
+					
+					int item_num = rs.getInt("item_num");
+					Item item = getItemByNum(item_num);
+					
+					int quantity = rs.getInt("line_quantity");
+					float price = rs.getFloat("line_price");
+					int discount = rs.getInt("line_discount");
+					float finalPrice = rs.getFloat("line_final_price");
+					
+					inv.addLine( new InvoiceLine(num, item, quantity, price, discount, finalPrice) );
+					
+				}
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return inv;
+	}
+	
 	public ArrayList<Customer> getAllCustomers() {
 		
 		ArrayList<Customer> list = new ArrayList<Customer>();
@@ -70,7 +306,7 @@ public class OracleDB {
 				
 				ResultSet rs = ps.executeQuery();
 				
-				while (rs.next())
+				while (rs.next()) {
 					list.add(new Customer(	rs.getInt("customer_num"), 
 											rs.getString("customer_fname"),
 											rs.getString("customer_lname"),
@@ -78,7 +314,40 @@ public class OracleDB {
 											rs.getString("customer_street"),
 											rs.getString("customer_city"),
 											rs.getString("customer_phone") 	));
+				}
 							
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return list;
+	}
+	
+	public ArrayList<Item> getAllItems() {
+		
+		ArrayList<Item> list = new ArrayList<Item>();
+		
+		synchronized (connection) {
+			try {
+				String sqlQuery = "SELECT * FROM items";
+
+				PreparedStatement ps = connection.prepareStatement(sqlQuery);
+				
+				ResultSet rs = ps.executeQuery();
+				
+				while (rs.next()) {
+					
+					int wh_num = rs.getInt("wh_num");
+					Warehouse wh = getWarehouseByNum(wh_num);
+					
+					list.add(new Item(	rs.getInt("item_num"), 
+										rs.getString("item_name"),
+										rs.getString("item_desc"),
+										rs.getInt("item_price"),
+										rs.getBlob("item_img"),
+										wh	));
+				}
 							
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -112,6 +381,7 @@ public class OracleDB {
 	}
 
 	public void addNewOrder(Customer c) {
+		
 		synchronized (connection) {
 			try {
 				String sqlQuery = 	"INSERT INTO orders "
@@ -137,30 +407,4 @@ public class OracleDB {
 	    return new java.sql.Date(today.getTime());
 	}
 	
-	/////////////////////////////////////////////////////////////
-	
-	public void test() {
-		
-		synchronized (connection) {
-			try {
-				String sqlQuery = "SELECT * "
-								+ "FROM emp ";
-
-				PreparedStatement ps = connection.prepareStatement(sqlQuery);
-				
-				//ps.setTimestamp(1, sqlStart);
-				//ps.setTimestamp(2, sqlEnd);
-
-				ResultSet rs = ps.executeQuery();
-				
-				while (rs.next())
-					System.out.println(rs.getString("ename"));
-
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-		
-	}
-
 }

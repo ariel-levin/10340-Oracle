@@ -84,7 +84,11 @@ public class Order {
 	public OrderLine getLine(int line_num) {
 		return lines.get(line_num - 1);
 	}
-
+	
+	public int getNumOfLines() {
+		return lines.size();
+	}
+	
 	
 	@Override
 	public String toString() {

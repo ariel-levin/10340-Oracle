@@ -90,6 +90,10 @@ public class Invoice {
 		return lines.get(line_num - 1);
 	}
 	
+	public int getNumOfLines() {
+		return lines.size();
+	}
+	
 
 	@Override
 	public String toString() {

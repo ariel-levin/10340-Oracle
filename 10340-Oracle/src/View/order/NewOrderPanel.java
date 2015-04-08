@@ -1,110 +1,77 @@
 package View.order;
 
-import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import javax.swing.BorderFactory;
-import javax.swing.DefaultCellEditor;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
+import javax.swing.JOptionPane;
 
 import Model.*;
 import View.MainFrame;
-import View.utils.SalesTableModelListener;
 
 
-public class NewOrderPanel extends JPanel {
+public class NewOrderPanel extends SalePanel {
 
 	private static final long serialVersionUID = 1L;
-	
-	private MainFrame 		mainFrame;
-	private JPanel 			innerPanel;
-	private Order 			order;	
+
+	private Order order;
+
 	
 	public NewOrderPanel(MainFrame mainFrame) {
-		
-		this.mainFrame = mainFrame;
-		
+
+		super(mainFrame, "Order");
+
 		int order_num = mainFrame.getDB().getCurrentOrderNum();
 		this.order = mainFrame.getDB().getOrderByNum(order_num);
-		
+
 		initPanel();
 	}
+
 	
 	private void initPanel() {
-		
-		setLayout(new BorderLayout());
-		
-		innerPanel = new JPanel();
-		innerPanel.setLayout(new BorderLayout());
-		
-		JScrollPane scroller = new JScrollPane(innerPanel);
-		scroller.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-		add(scroller, BorderLayout.CENTER);
-		
-		setBorder(BorderFactory.createTitledBorder("New Order: " + order.getNum()) );
-		
-		setPreferredSize(mainFrame.getSize());
-		
-		createTable();
+
+		setBorder(BorderFactory.createTitledBorder("New Order: "
+				+ order.getNum()));
+
+		lblNum.setText(lblNum.getText() + order.getNum());
+		lblDate.setText(lblDate.getText() + order.getDate());
+		lblCustomer.setText(order.getCustomer().toString());
+
+		btnCommit.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				commitOrder();
+			}
+		});
+
 	}
-	
-	private void createTable() {
-		
-		String[] columnNames = {"Item", "Quantity", "Price", "Discount(%)", "Final Price"};
-        setLayout(new BorderLayout());
-        JScrollPane pane = new JScrollPane();
-        JTable table = new JTable();
-        
-        pane.setViewportView(table);
-        JPanel eastPanel = new JPanel();
-        JButton btnAdd = new JButton("Add Line");
-        eastPanel.add(btnAdd);
-        JPanel northPanel = new JPanel();
 
-        JLabel lblField1 = new JLabel("Order Number: " + order.getNum());
-        EmptyBorder border1 = new EmptyBorder(5, 0, 5, 50);
-        lblField1.setBorder(border1);
-        JLabel lblField2 = new JLabel("Date: " + order.getDate());
-        EmptyBorder border2 = new EmptyBorder(5, 0, 5, 50);
-        lblField2.setBorder(border2);
-        JLabel lblField3 = new JLabel(order.getCustomer().toString());
-        northPanel.add(lblField1);
-        northPanel.add(lblField2);
-        northPanel.add(lblField3);
+	private void commitOrder() {
 
-        add(northPanel, BorderLayout.NORTH);
-        add(eastPanel, BorderLayout.EAST);
-        add(pane,BorderLayout.CENTER);
-        DefaultTableModel tableModel = new DefaultTableModel(columnNames, 1);
-        tableModel.addTableModelListener(new SalesTableModelListener(tableModel));
-        table.setModel(tableModel);
-        
-        ArrayList<Item> items = mainFrame.getDB().getAllItems();
-        JComboBox<Item> cb_items = new JComboBox<Item>();
+		for (int i = 0; i < tableModel.getRowCount(); i++) {
 
-		for (Item item : items)
-			cb_items.addItem(item);
-        
-        TableColumn itemsColumn = table.getColumnModel().getColumn(0);
-		itemsColumn.setCellEditor(new DefaultCellEditor(cb_items));
+			if (tableModel.getValueAt(i, ITEM_COL) != null) {
 
-		
-        btnAdd.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent e) {
-//                int count = tableModel.getRowCount() + 1;
-        		tableModel.addRow(new Object[] {});
-            }
-        });
+				Item item = (Item) tableModel.getValueAt(i, ITEM_COL);
+				int quantity = (int) tableModel.getValueAt(i, QUANTITY_COL);
+				float price = (float) tableModel.getValueAt(i, PRICE_COL);
+				int discount = (int) tableModel.getValueAt(i, DISCOUNT_COL);
+				;
+				float fprice = (float) tableModel.getValueAt(i, FPRICE_COL);
+				;
+
+				order.addLine(new OrderLine(i + 1, item, quantity, price,
+						discount, fprice));
+			}
+		}
+
+		boolean success = mainFrame.getDB().addOrderLines(order);
+
+		if (success) {
+			String msg = "Order commited successfully";
+			JOptionPane.showMessageDialog(null, msg, "Success",JOptionPane.INFORMATION_MESSAGE);
+		}
+
+		mainFrame.removePanel();
 	}
-	
+
 }

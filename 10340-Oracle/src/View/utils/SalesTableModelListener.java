@@ -6,20 +6,14 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 
 import Model.Item;
+import View.order.SalePanel;
 
 
 public class SalesTableModelListener implements TableModelListener {
 
-	public static final int ITEM_COL 		= 0;
-	public static final int QUANTITY_COL 	= 1;
-	public static final int PRICE_COL 		= 2;
-	public static final int DISCOUNT_COL 	= 3;
-	public static final int FPRICE_COL 		= 4;
-	
-	private boolean 	enableListener = true;
-	private int 		rowCount;
-	
-	AbstractTableModel tableModel;
+	private boolean 			enableListener = true;
+	private int 				rowCount;
+	private AbstractTableModel 	tableModel;
 	
 	
 	public SalesTableModelListener(AbstractTableModel tableModel) {
@@ -34,50 +28,65 @@ public class SalesTableModelListener implements TableModelListener {
 		if (!enableListener)
 			return;
 		
-		if (tableModel.getRowCount() != rowCount) {		// means we added row
+		if (tableModel.getRowCount() != rowCount) {		// means we added or removed row
 			rowCount = tableModel.getRowCount();
 			return;
 		}
 		
+		int row = e.getFirstRow();
+		int col = e.getColumn();
+		Item item = (Item)tableModel.getValueAt(row, SalePanel.ITEM_COL);
+		
+		if (item == null) {		// false selection
+			selectItemError(row, col);
+			return;
+		}
+		
+		
+		//////////////////////////////// starting the check
 		enableListener = false;
 		
-		int col = e.getColumn();
-		int row = e.getFirstRow();
-		System.out.println("row changed: " + row);
-		Item item = (Item)tableModel.getValueAt(row, ITEM_COL);
 		float defaultPrice;
 		
 		switch (col) {
 		
-			case ITEM_COL:
-				tableModel.setValueAt(1, row, QUANTITY_COL);
-				tableModel.setValueAt(item.getPrice(), row, PRICE_COL);
-				tableModel.setValueAt(0, row, DISCOUNT_COL);
+			case SalePanel.ITEM_COL:
+				tableModel.setValueAt(1, row, SalePanel.QUANTITY_COL);
+				tableModel.setValueAt(item.getPrice(), row, SalePanel.PRICE_COL);
+				tableModel.setValueAt(0, row, SalePanel.DISCOUNT_COL);
 				break;
 				
-			case QUANTITY_COL:
+			case SalePanel.QUANTITY_COL:
 				checkInt(row, col, 1);
 				break;
 				
-			case PRICE_COL:
+			case SalePanel.PRICE_COL:
 				defaultPrice = item.getPrice();
 				checkPrice(row, col, defaultPrice);
 				break;
 				
-			case DISCOUNT_COL:
+			case SalePanel.DISCOUNT_COL:
 				checkPercent(row, col);
 				break;
 				
-			case FPRICE_COL:
+			case SalePanel.FPRICE_COL:
 				defaultPrice = getFinalPrice(row);
 				checkPrice(row, col, defaultPrice);
 				break;
 			
 		}
 		
-		if (col != FPRICE_COL)
+		if (col != SalePanel.FPRICE_COL)
 			updateFinalPrice(row);
 		
+		enableListener = true;
+	}
+	
+	public void selectItemError(int row, int col) {
+		String msg = "ERROR: Item not selected\nPlease select an item first";
+		JOptionPane.showMessageDialog(null,msg,"Error",JOptionPane.ERROR_MESSAGE);
+		enableListener = false;
+		tableModel.setValueAt("", row, col);
 		enableListener = true;
 	}
 	
@@ -126,15 +135,15 @@ public class SalesTableModelListener implements TableModelListener {
 	}
 	
 	public float getFinalPrice(int row) {
-		int quantity = (int)tableModel.getValueAt(row, QUANTITY_COL);
-		float price = (float)tableModel.getValueAt(row, PRICE_COL);
-		int discount = (int)tableModel.getValueAt(row, DISCOUNT_COL);
+		int quantity = (int)tableModel.getValueAt(row, SalePanel.QUANTITY_COL);
+		float price = (float)tableModel.getValueAt(row, SalePanel.PRICE_COL);
+		int discount = (int)tableModel.getValueAt(row, SalePanel.DISCOUNT_COL);
 		
 		return quantity * price * (1 - ((float)discount / 100));
 	}
 
 	public void updateFinalPrice(int row) {
-		tableModel.setValueAt( getFinalPrice(row) , row, FPRICE_COL);
+		tableModel.setValueAt( getFinalPrice(row) , row, SalePanel.FPRICE_COL);
 	}
 	
 }

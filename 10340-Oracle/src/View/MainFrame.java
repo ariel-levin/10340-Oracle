@@ -32,8 +32,6 @@ public class MainFrame extends JFrame {
 		db.openConnection();
 
 		initFrame();
-		
-		test();
 	}
 	
 	
@@ -59,7 +57,7 @@ public class MainFrame extends JFrame {
 		//frameSize.setSize(1080,650);
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		Dimension panelSize = new Dimension();
-		panelSize.setSize(screenSize.width * 0.7, screenSize.height * 0.7);
+		panelSize.setSize(screenSize.width * 0.6, screenSize.height * 0.6);
 		setSize(panelSize);
 		
 		getContentPane().setLayout(new BorderLayout());
@@ -100,6 +98,11 @@ public class MainFrame extends JFrame {
 		refresh();
 	}
 	
+	public void removePanel() {
+		mainPanel.removeAll();
+		refresh();
+	}
+	
 	public OracleDB getDB() {
 		return db;
 	}
@@ -111,6 +114,7 @@ public class MainFrame extends JFrame {
 	
 	public void refresh() {
 		setVisible(true);
+		repaint();
 	}
 	
 	public Dimension getSize() {
@@ -120,17 +124,6 @@ public class MainFrame extends JFrame {
 	public void newOrder(Customer c) {
 		db.addNewOrder(c);
 		changePanel(new NewOrderPanel(this));
-	}
-	
-	
-	//////////////////////////////////////////////////////////////////
-	
-	
-	private void test() {
-//		Customer c = db.getCustomerByNum(1);
-//		System.out.println(c);
-//		Order o = db.getOrderByNum(7);
-//		System.out.println(o);
 	}
 	
 }

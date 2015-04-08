@@ -402,6 +402,45 @@ public class OracleDB {
 		}
 	}
 	
+	public boolean addOrderLines(Order order) {
+		
+		boolean success = false;
+		
+		synchronized (connection) {
+			
+			ArrayList<OrderLine> list = order.getLines();
+			
+			for (OrderLine line : list) {
+				try {
+					String sqlQuery = 	"INSERT INTO orders_lines "
+							+ "(order_num, line_num, item_num, line_quantity, line_price, "
+							+ "line_discount, line_final_price) "
+							+ "VALUES (?,?,?,?,?,?,?)";
+	
+					PreparedStatement ps = connection.prepareStatement(sqlQuery);
+	
+					ps.setInt(1, order.getNum());
+					ps.setInt(2, line.getNum());
+					ps.setInt(3, line.getItem().getNum());
+					ps.setInt(4, line.getQuantity());
+					ps.setFloat(5, line.getPrice());
+					ps.setInt(6, line.getDiscount());
+					ps.setFloat(7, line.getFinalPrice());
+					
+					ps.executeUpdate();
+					
+					success = true;
+	
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			
+			}
+		}
+		
+		return success;
+	}
+	
 	private static java.sql.Date getCurrentDate() {
 	    java.util.Date today = new java.util.Date();
 	    return new java.sql.Date(today.getTime());

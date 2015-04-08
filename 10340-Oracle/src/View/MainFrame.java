@@ -55,17 +55,20 @@ public class MainFrame extends JFrame {
 			}
 		});
 
-		Dimension frameSize = new Dimension();
-		frameSize.setSize(1080,650);
-		setSize(frameSize);
+		//Dimension frameSize = new Dimension();
+		//frameSize.setSize(1080,650);
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		Dimension panelSize = new Dimension();
+		panelSize.setSize(screenSize.width * 0.7, screenSize.height * 0.7);
+		setSize(panelSize);
 		
 		getContentPane().setLayout(new BorderLayout());
 
 		mainPanel = new JPanel();
 		mainPanel.setLayout(new BorderLayout());
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		Dimension panelSize = new Dimension();
-		panelSize.setSize(screenSize.width * 0.5, screenSize.height * 0.5);
+		//Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		//Dimension panelSize = new Dimension();
+		//panelSize.setSize(screenSize.width * 0.5, screenSize.height * 0.5);
 		mainPanel.setSize(panelSize);
 		getContentPane().add(mainPanel, BorderLayout.CENTER);
 		

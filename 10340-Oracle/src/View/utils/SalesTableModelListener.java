@@ -16,81 +16,125 @@ public class SalesTableModelListener implements TableModelListener {
 	public static final int DISCOUNT_COL 	= 3;
 	public static final int FPRICE_COL 		= 4;
 	
+	private boolean 	enableListener = true;
+	private int 		rowCount;
+	
 	AbstractTableModel tableModel;
 	
 	
 	public SalesTableModelListener(AbstractTableModel tableModel) {
 		this.tableModel = tableModel;
+		this.rowCount = tableModel.getRowCount();
 	}
 	
 	
 	@Override
 	public void tableChanged(TableModelEvent e) {
 		
+		if (!enableListener)
+			return;
+		
+		if (tableModel.getRowCount() != rowCount) {		// means we added row
+			rowCount = tableModel.getRowCount();
+			return;
+		}
+		
+		enableListener = false;
+		
 		int col = e.getColumn();
 		int row = e.getFirstRow();
+		System.out.println("row changed: " + row);
 		Item item = (Item)tableModel.getValueAt(row, ITEM_COL);
+		float defaultPrice;
 		
 		switch (col) {
 		
-			case ITEM_COL:	
+			case ITEM_COL:
 				tableModel.setValueAt(1, row, QUANTITY_COL);
 				tableModel.setValueAt(item.getPrice(), row, PRICE_COL);
 				tableModel.setValueAt(0, row, DISCOUNT_COL);
-				updateFinalPrice(row);
 				break;
 				
 			case QUANTITY_COL:
 				checkInt(row, col, 1);
-				updateFinalPrice(row);
 				break;
 				
 			case PRICE_COL:
-				float defaultPrice = item.getPrice();
+				defaultPrice = item.getPrice();
 				checkPrice(row, col, defaultPrice);
+				break;
 				
+			case DISCOUNT_COL:
+				checkPercent(row, col);
+				break;
+				
+			case FPRICE_COL:
+				defaultPrice = getFinalPrice(row);
+				checkPrice(row, col, defaultPrice);
 				break;
 			
 		}
-
+		
+		if (col != FPRICE_COL)
+			updateFinalPrice(row);
+		
+		enableListener = true;
 	}
 	
-	public int checkInt(int row, int col, int def) {
-		int num = -1;
+	public void checkInt(int row, int col, int def) {
 		try {
-			num = (int)tableModel.getValueAt(row, col);
+			int num = Integer.parseInt( (String)tableModel.getValueAt(row,col) );
+			tableModel.setValueAt(num, row, col);
+			
 		} catch (Exception e1) {
 			String msg = "ERROR: Not a valid number entered";
 			JOptionPane.showMessageDialog(null,msg,"Error",JOptionPane.ERROR_MESSAGE);
 			tableModel.setValueAt(def, row, col);
 		}
-		return num;
 	}
 	
-	public float checkPrice(int row, int col, float defaultPrice) {
-		float price = -1;
+	public void checkPercent(int row, int col) {
 		try {
-			price = (float)tableModel.getValueAt(row, col);
+			int percent = Integer.parseInt( (String)tableModel.getValueAt(row,col) );
+			
+			if (percent < 0 || percent > 100)
+				throw new Exception();
+			
+			tableModel.setValueAt(percent, row, col);
+			
+		} catch (Exception e1) {
+			String msg = "ERROR: Not a valid percent entered";
+			JOptionPane.showMessageDialog(null,msg,"Error",JOptionPane.ERROR_MESSAGE);
+			tableModel.setValueAt(0, row, col);
+		}
+	}
+	
+	public void checkPrice(int row, int col, float defaultPrice) {
+		try {
+			float price = Float.parseFloat( (String)tableModel.getValueAt(row,col) );
 			
 			if (price < 0)
 				throw new Exception();
+			
+			tableModel.setValueAt(price, row, col);
 			
 		} catch (Exception e1) {
 			String msg = "ERROR: Not a valid value entered";
 			JOptionPane.showMessageDialog(null,msg,"Error",JOptionPane.ERROR_MESSAGE);
 			tableModel.setValueAt(defaultPrice, row, col);
 		}
-		
-		return price;
 	}
-
-	public void updateFinalPrice(int row) {
+	
+	public float getFinalPrice(int row) {
 		int quantity = (int)tableModel.getValueAt(row, QUANTITY_COL);
 		float price = (float)tableModel.getValueAt(row, PRICE_COL);
 		int discount = (int)tableModel.getValueAt(row, DISCOUNT_COL);
 		
-		float finalPrice = quantity * price * (1 - (discount / 100));
-		tableModel.setValueAt( finalPrice , row, FPRICE_COL);
+		return quantity * price * (1 - ((float)discount / 100));
+	}
+
+	public void updateFinalPrice(int row) {
+		tableModel.setValueAt( getFinalPrice(row) , row, FPRICE_COL);
 	}
 	
 }

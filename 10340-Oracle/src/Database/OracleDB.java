@@ -1,4 +1,4 @@
-package Database;
+package database;
 
 import java.sql.Blob;
 import java.sql.Connection;
@@ -9,7 +9,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
-import Model.*;
+import model.*;
 
 
 public class OracleDB {
@@ -18,7 +18,9 @@ public class OracleDB {
 	private String dbUrl;
 	
 	
-	public void openConnection() {
+	public boolean openConnection() {
+		
+		boolean success = false;
 		
 		try {
 			Class.forName("oracle.jdbc.driver.OracleDriver").newInstance();
@@ -26,7 +28,7 @@ public class OracleDB {
 
 			connection = DriverManager.getConnection(dbUrl, "ARIEL", "ariel");
 
-			System.out.println("Connection Success");
+			success = true;
 			
 		} catch (InstantiationException | IllegalAccessException
 				| ClassNotFoundException | SQLException e) {
@@ -37,17 +39,25 @@ public class OracleDB {
 			System.exit(0);
 		}
 		
+		return success;
 	}
 
-	public void closeConnection() {
+	public boolean closeConnection() {
+		
+		boolean success = false;
+		
 		synchronized (connection) {
 			try {
 				connection.close();
-				System.out.println("Connection Closed");
+				
+				success = true;
+
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		}
+		
+		return success;
 	}
 
 	public Customer getCustomerByNum(int customer_num) {
@@ -380,7 +390,32 @@ public class OracleDB {
 		return max;
 	}
 
-	public void addNewOrder(Customer c) {
+	public int getCurrentInvoiceNum() {
+		
+		int max = -1;
+		
+		synchronized (connection) {
+			try {
+				String sqlQuery = "select \"INVOICE_SEQ\".currval from dual";
+
+				PreparedStatement ps = connection.prepareStatement(sqlQuery);
+				
+				ResultSet rs = ps.executeQuery();
+				
+				rs.next();
+				max = rs.getInt(1);
+							
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return max;
+	}
+	
+	public boolean addNewOrder(Customer c) {
+		
+		boolean success = false;
 		
 		synchronized (connection) {
 			try {
@@ -394,12 +429,45 @@ public class OracleDB {
 				ps.setInt(2, c.getNum());
 				ps.setInt(3, 0);
 				ps.setString(4, "open");
+				
 				ps.executeUpdate();
+				
+				success = true;
 
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		}
+		
+		return success;
+	}
+	
+	public boolean addNewInvoice(Customer c) {
+		
+		boolean success = false;
+		
+		synchronized (connection) {
+			try {
+				String sqlQuery = 	"INSERT INTO invoice "
+						+ "(invoice_date, customer_num, invoice_price) "
+						+ "VALUES (?,?,?)";
+
+				PreparedStatement ps = connection.prepareStatement(sqlQuery);
+
+				ps.setDate(1, getCurrentDate());
+				ps.setInt(2, c.getNum());
+				ps.setInt(3, 0);
+				
+				ps.executeUpdate();
+				
+				success = true;
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return success;
 	}
 	
 	public boolean addOrderLines(Order order) {
@@ -434,14 +502,109 @@ public class OracleDB {
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
+			}
+		}
+		
+		return success;
+	}
+
+	public boolean addInvoiceLines(Invoice invoice) {
+		
+		boolean success = false;
+		
+		synchronized (connection) {
 			
+			ArrayList<InvoiceLine> list = invoice.getLines();
+			
+			for (InvoiceLine line : list) {
+				try {
+					String sqlQuery = 	"INSERT INTO invoice_lines "
+							+ "(invoice_num, line_num, item_num, line_quantity, line_price, "
+							+ "line_discount, line_final_price) "
+							+ "VALUES (?,?,?,?,?,?,?)";
+	
+					PreparedStatement ps = connection.prepareStatement(sqlQuery);
+	
+					ps.setInt(1, invoice.getNum());
+					ps.setInt(2, line.getNum());
+					ps.setInt(3, line.getItem().getNum());
+					ps.setInt(4, line.getQuantity());
+					ps.setFloat(5, line.getPrice());
+					ps.setInt(6, line.getDiscount());
+					ps.setFloat(7, line.getFinalPrice());
+					
+					ps.executeUpdate();
+					
+					success = true;
+	
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 		
 		return success;
 	}
 	
-	private static java.sql.Date getCurrentDate() {
+	public boolean closeOrder(int order_num) {
+		
+		boolean success = false;
+		
+		synchronized (connection) {
+
+			try {
+				String sqlQuery = "UPDATE orders "
+						+ "SET order_status = ? "
+						+ "WHERE order_num = ? ";
+
+				PreparedStatement ps = connection.prepareStatement(sqlQuery);
+
+				ps.setString(1, "closed");
+				ps.setInt(2, order_num);
+
+				ps.executeUpdate();
+
+				success = true;
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		}
+		
+		return success;
+	}
+
+	public boolean openOrder(int order_num) {
+		
+		boolean success = false;
+		
+		synchronized (connection) {
+
+			try {
+				String sqlQuery = "UPDATE orders "
+						+ "SET order_status = ? "
+						+ "WHERE order_num = ? ";
+
+				PreparedStatement ps = connection.prepareStatement(sqlQuery);
+
+				ps.setString(1, "open");
+				ps.setInt(2, order_num);
+
+				ps.executeUpdate();
+
+				success = true;
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		}
+		
+		return success;
+	}
+	
+	public static java.sql.Date getCurrentDate() {
 	    java.util.Date today = new java.util.Date();
 	    return new java.sql.Date(today.getTime());
 	}

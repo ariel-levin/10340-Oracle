@@ -1,15 +1,13 @@
-package View;
+package view;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
-import View.order.*;
-
+import view.forms.*;
 
 
 public class SysMenu extends JMenuBar {
@@ -37,7 +35,7 @@ public class SysMenu extends JMenuBar {
 		
 		JMenu orderMenu = new JMenu("Order");
 		
-		JMenuItem searchOrderItem = new JMenuItem("Search Order");
+		JMenuItem searchOrderItem = new JMenuItem("Search/Update Order");
 		searchOrderItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -56,16 +54,6 @@ public class SysMenu extends JMenuBar {
 			}
 		});
 		orderMenu.add(newOrderItem);
-		
-		JMenuItem updateOrderItem = new JMenuItem("Update Order");
-		updateOrderItem.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				
-				
-			}
-		});
-		orderMenu.add(updateOrderItem);
 		
 		JMenuItem cancelOrderItem = new JMenuItem("Cancel Order");
 		cancelOrderItem.addActionListener(new ActionListener() {
@@ -98,7 +86,7 @@ public class SysMenu extends JMenuBar {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
-				
+				new NewInvoiceForm(mainFrame);
 			}
 		});
 		invoiceMenu.add(newInvoiceItem);
@@ -112,16 +100,6 @@ public class SysMenu extends JMenuBar {
 			}
 		});
 		invoiceMenu.add(invoiceFromOrderItem);
-		
-		JMenuItem updateInvoiceItem = new JMenuItem("Update Invoice");
-		updateInvoiceItem.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				
-				
-			}
-		});
-		invoiceMenu.add(updateInvoiceItem);
 		
 		JMenuItem cancelInvoiceItem = new JMenuItem("Cancel Invoice");
 		cancelInvoiceItem.addActionListener(new ActionListener() {
@@ -139,7 +117,7 @@ public class SysMenu extends JMenuBar {
 
 		JMenu reportMenu = new JMenu("Reports/Queries");
 		
-		JMenuItem itemBalanceItem = new JMenuItem("Items / Warehouse Balance");
+		JMenuItem itemBalanceItem = new JMenuItem("Items/Warehouse Balance");
 		itemBalanceItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

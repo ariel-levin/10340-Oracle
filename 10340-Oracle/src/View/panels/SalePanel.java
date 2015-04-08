@@ -1,4 +1,4 @@
-package View.order;
+package view.panels;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -20,9 +21,9 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
-import Model.Item;
-import View.MainFrame;
-import View.utils.SalesTableModelListener;
+import model.Item;
+import view.MainFrame;
+import view.utils.SalesTableModelListener;
 
 
 public class SalePanel extends JPanel {

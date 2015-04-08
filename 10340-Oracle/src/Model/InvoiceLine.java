@@ -1,4 +1,4 @@
-package Model;
+package model;
 
 public class InvoiceLine {
 
@@ -10,8 +10,7 @@ public class InvoiceLine {
 	private float 	finalPrice;
 	
 	
-	public InvoiceLine(int num, Item item, int quantity, float price,
-			int discount, float finalPrice) {
+	public InvoiceLine(int num, Item item, int quantity, float price, int discount, float finalPrice) {
 		this.num = num;
 		this.item = item;
 		this.quantity = quantity;

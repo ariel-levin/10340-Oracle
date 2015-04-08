@@ -1,4 +1,4 @@
-package View;
+package view;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -11,25 +11,25 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 
-import Database.OracleDB;
-import Model.*;
-import View.order.NewOrderPanel;
+import database.OracleDB;
+import model.*;
+import view.panels.*;
 
 
 public class MainFrame extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	
-	private OracleDB db;
-	
-	private JPanel mainPanel;
+	private OracleDB 	db;
+	private JPanel 		mainPanel;
 	
 
 	public MainFrame() {
 		
 		db = new OracleDB();
 		
-		db.openConnection();
+		if (db.openConnection())
+			System.out.println("Connection Success");
 
 		initFrame();
 	}
@@ -53,8 +53,6 @@ public class MainFrame extends JFrame {
 			}
 		});
 
-		//Dimension frameSize = new Dimension();
-		//frameSize.setSize(1080,650);
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		Dimension panelSize = new Dimension();
 		panelSize.setSize(screenSize.width * 0.6, screenSize.height * 0.6);
@@ -64,27 +62,12 @@ public class MainFrame extends JFrame {
 
 		mainPanel = new JPanel();
 		mainPanel.setLayout(new BorderLayout());
-		//Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		//Dimension panelSize = new Dimension();
-		//panelSize.setSize(screenSize.width * 0.5, screenSize.height * 0.5);
+
 		mainPanel.setSize(panelSize);
 		getContentPane().add(mainPanel, BorderLayout.CENTER);
 		
 		EmptyBorder border = new EmptyBorder(15, 15, 15, 15);
 		mainPanel.setBorder(border);
-		
-//		JPanel lowerPanel = new JPanel(new BorderLayout());
-//		console = new JTextArea();
-//		console.setFont(console.getFont().deriveFont(Font.PLAIN,12));
-//		console.setEditable(false);
-
-//		DefaultCaret caret = (DefaultCaret)console.getCaret();
-//		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
-
-//		JScrollPane scrollPane = new JScrollPane();
-//		scrollPane.setViewportView(console);
-//		scrollPane.setPreferredSize(new Dimension(this.getWidth()-20, 150));
-//		lowerPanel.add(scrollPane, BorderLayout.CENTER);
 		
 		setJMenuBar(new SysMenu(this));
 		setLocationRelativeTo(null);
@@ -108,7 +91,10 @@ public class MainFrame extends JFrame {
 	}
 	
 	public void endProgram() {
-		db.closeConnection();
+		
+		if (db.closeConnection())
+			System.out.println("Connection Closed");
+		
 		System.exit(0);
 	}
 	
@@ -124,6 +110,11 @@ public class MainFrame extends JFrame {
 	public void newOrder(Customer c) {
 		db.addNewOrder(c);
 		changePanel(new NewOrderPanel(this));
+	}
+	
+	public void newInvoice(Customer c) {
+		db.addNewInvoice(c);
+		changePanel(new NewInvoicePanel(this));
 	}
 	
 }

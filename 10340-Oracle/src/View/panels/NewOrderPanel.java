@@ -1,12 +1,12 @@
-package View.order;
+package view.panels;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
 import javax.swing.JOptionPane;
 
-import Model.*;
-import View.MainFrame;
+import view.MainFrame;
+import model.*;
 
 
 public class NewOrderPanel extends SalePanel {
@@ -29,8 +29,7 @@ public class NewOrderPanel extends SalePanel {
 	
 	private void initPanel() {
 
-		setBorder(BorderFactory.createTitledBorder("New Order: "
-				+ order.getNum()));
+		setBorder(BorderFactory.createTitledBorder("New Order: " + order.getNum()));
 
 		lblNum.setText(lblNum.getText() + order.getNum());
 		lblDate.setText(lblDate.getText() + order.getDate());
@@ -64,10 +63,11 @@ public class NewOrderPanel extends SalePanel {
 			}
 		}
 
-		boolean success = mainFrame.getDB().addOrderLines(order);
+		boolean success1 = mainFrame.getDB().addOrderLines(order);
+		boolean success2 = mainFrame.getDB().closeOrder(order.getNum());
 
-		if (success) {
-			String msg = "Order commited successfully";
+		if (success1 && success2) {
+			String msg = "Order is closed and commited successfully";
 			JOptionPane.showMessageDialog(null, msg, "Success",JOptionPane.INFORMATION_MESSAGE);
 		}
 

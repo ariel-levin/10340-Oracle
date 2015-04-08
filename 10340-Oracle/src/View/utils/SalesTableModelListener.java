@@ -1,12 +1,12 @@
-package View.utils;
+package view.utils;
 
 import javax.swing.JOptionPane;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 
-import Model.Item;
-import View.order.SalePanel;
+import view.panels.SalePanel;
+import model.Item;
 
 
 public class SalesTableModelListener implements TableModelListener {

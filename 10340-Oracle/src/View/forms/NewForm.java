@@ -1,13 +1,10 @@
-package View.order;
+package view.forms;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
-
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -18,19 +15,20 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
-import Model.*;
-import View.MainFrame;
+import view.MainFrame;
+import model.*;
 
 
-public class NewOrderForm extends JFrame {
+public class NewForm extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	
-	private MainFrame mainFrame;
-	private JComboBox<Customer> cb_customers;
+	protected MainFrame 			mainFrame;
+	protected JComboBox<Customer> 	cb_customers;
+	protected JButton 				btnCommit;
 	
 
-	public NewOrderForm(MainFrame mainFrame) {
+	public NewForm(MainFrame mainFrame, String type) {
 		
 		this.mainFrame = mainFrame;
 		
@@ -48,7 +46,7 @@ public class NewOrderForm extends JFrame {
 			}
 		});
 		
-		setTitle("New Order");
+		setTitle("New " + type);
 		setSize(new Dimension(300,120));
 		
 		initFrame();
@@ -85,14 +83,7 @@ public class NewOrderForm extends JFrame {
 		
 		pnlMain.add(Box.createRigidArea(new Dimension(0,10)));
 
-		JButton btnCommit = new JButton("Commit");
-		btnCommit.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-				mainFrame.newOrder( (Customer)cb_customers.getSelectedItem() );
-				dispose();
-			}
-		});
+		btnCommit = new JButton("Commit");
 		
 		add(btnCommit, BorderLayout.SOUTH);
 		

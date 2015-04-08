@@ -1,4 +1,4 @@
-import View.MainFrame;
+import view.MainFrame;
 
 
 public class Program {

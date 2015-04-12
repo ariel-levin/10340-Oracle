@@ -92,8 +92,7 @@ public class Order {
 	
 	@Override
 	public String toString() {
-		return "Order [num=" + num + ", date=" + date + ", customer="
-				+ customer + ", price=" + price + ", status=" + status + "]";
+		return num + " | " + customer + " | " + date + " | " + price + "¤";
 	}
 	
 }

@@ -117,5 +117,10 @@ public class MainFrame extends JFrame {
 		changePanel(new NewInvoicePanel(this));
 	}
 	
+	public void newInvoiceFromOrder(Order o) {
+		db.addNewInvoiceFromOrder(o);
+		changePanel(new NewInvoicePanel(this));
+	}
+	
 }
 

@@ -2,6 +2,7 @@ package view.panels;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.JOptionPane;
 
@@ -24,6 +25,9 @@ public class NewInvoicePanel extends SalePanel {
 		this.invoice = mainFrame.getDB().getInvoiceByNum(invoice_num);
 
 		initPanel();
+		
+		if (invoice.getOrder() != null)
+			loadOrderLines();
 	}
 
 	
@@ -31,7 +35,7 @@ public class NewInvoicePanel extends SalePanel {
 
 		setBorder(BorderFactory.createTitledBorder("New Invoice: " + invoice.getNum()));
 
-		lblNum.setText(lblNum.getText() + invoice.getNum());
+		lblNum.setText("Invoice Number: " + invoice.getNum());
 		lblDate.setText(lblDate.getText() + invoice.getDate());
 		lblCustomer.setText(invoice.getCustomer().toString());
 
@@ -43,8 +47,26 @@ public class NewInvoicePanel extends SalePanel {
 		});
 
 	}
+	
+	private void loadOrderLines() {
+		tableModel.removeRow(0);
+		ArrayList<OrderLine> list = invoice.getOrder().getLines();
+		
+		for (OrderLine line : list) {
+			tableModel.addRow(new Object[] { line.getItem(),
+					line.getQuantity(), line.getPrice(), line.getDiscount(),
+					line.getFinalPrice() });
+		}
+	}
 
 	private void commitInvoice() {
+		
+		if (tableModel.getRowCount() < 1) {
+			String msg = "ERROR: Invoice with no lines";
+			JOptionPane.showMessageDialog(null, msg, "Error",JOptionPane.ERROR_MESSAGE);
+		}
+
+		float invoice_price = 0;
 
 		for (int i = 0; i < tableModel.getRowCount(); i++) {
 
@@ -54,19 +76,27 @@ public class NewInvoicePanel extends SalePanel {
 				int quantity = (int) tableModel.getValueAt(i, QUANTITY_COL);
 				float price = (float) tableModel.getValueAt(i, PRICE_COL);
 				int discount = (int) tableModel.getValueAt(i, DISCOUNT_COL);
-				;
 				float fprice = (float) tableModel.getValueAt(i, FPRICE_COL);
-				;
 
 				invoice.addLine(new InvoiceLine(i + 1, item, quantity, price, discount, fprice));
+				
+				invoice_price += fprice;
 			}
 		}
+		
+		boolean success1 = mainFrame.getDB().addInvoiceLines(invoice);
+		boolean success2 = mainFrame.getDB().updateInvoicePrice(invoice.getNum(), invoice_price);
+		boolean success3 = true;
+		
+		if (invoice.getOrder() != null)
+			success3 = mainFrame.getDB().closeOrder(invoice.getOrder().getNum());
 
-		boolean success = mainFrame.getDB().addInvoiceLines(invoice);
-
-		if (success) {
-			String msg = "Invoice commited successfully";
+		if (success1 && success2 && success3) {
+			String msg = "The Invoice was commited successfully";
 			JOptionPane.showMessageDialog(null, msg, "Success",JOptionPane.INFORMATION_MESSAGE);
+		} else {
+			String msg = "Some error occurred...";
+			JOptionPane.showMessageDialog(null, msg, "Error",JOptionPane.ERROR_MESSAGE);
 		}
 
 		mainFrame.removePanel();

@@ -70,7 +70,7 @@ public class SalePanel extends JPanel {
 		eastPanel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
 
 		JPanel northPanel = new JPanel();
-		lblNum = new JLabel("Order Number: ");
+		lblNum = new JLabel();
 		EmptyBorder border = new EmptyBorder(5, 50, 5, 0);
 		lblDate = new JLabel("Date: ");
 		lblDate.setBorder(border);

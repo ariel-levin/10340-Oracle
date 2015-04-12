@@ -366,6 +366,40 @@ public class OracleDB {
 		
 		return list;
 	}
+
+	public ArrayList<Order> getAllOpenOrders() {
+		
+		ArrayList<Order> list = new ArrayList<Order>();
+		
+		synchronized (connection) {
+			try {
+				String sqlQuery = "SELECT * FROM orders WHERE order_status LIKE 'open'";
+
+				PreparedStatement ps1 = connection.prepareStatement(sqlQuery);
+				
+				ResultSet rs1 = ps1.executeQuery();
+				
+				while (rs1.next()) {
+					
+					int order_num = rs1.getInt("order_num");
+					java.sql.Date date = rs1.getDate("order_date");
+					
+					int customer_num = rs1.getInt("customer_num");
+					Customer customer = getCustomerByNum(customer_num);
+					
+					float price = rs1.getFloat("order_price");
+					String status = rs1.getString("order_status");
+					
+					list.add( new Order(order_num, date, customer, price, status) );
+				}
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return list;
+	}
 	
 	public int getCurrentOrderNum() {
 		
@@ -469,6 +503,35 @@ public class OracleDB {
 		
 		return success;
 	}
+
+	public boolean addNewInvoiceFromOrder(Order o) {
+		
+		boolean success = false;
+		
+		synchronized (connection) {
+			try {
+				String sqlQuery = 	"INSERT INTO invoice "
+						+ "(order_num, invoice_date, customer_num, invoice_price) "
+						+ "VALUES (?,?,?,?)";
+
+				PreparedStatement ps = connection.prepareStatement(sqlQuery);
+
+				ps.setInt(1, o.getNum());
+				ps.setDate(2, getCurrentDate());
+				ps.setInt(3, o.getCustomer().getNum());
+				ps.setFloat(4, o.getPrice());
+				
+				ps.executeUpdate();
+				
+				success = true;
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return success;
+	}
 	
 	public boolean addOrderLines(Order order) {
 		
@@ -507,7 +570,7 @@ public class OracleDB {
 		
 		return success;
 	}
-
+	
 	public boolean addInvoiceLines(Invoice invoice) {
 		
 		boolean success = false;
@@ -541,6 +604,64 @@ public class OracleDB {
 					e.printStackTrace();
 				}
 			}
+		}
+		
+		return success;
+	}
+	
+	public boolean updateInvoicePrice(int invoice_num, float invoice_price) {
+		
+		boolean success = false;
+		
+		synchronized (connection) {
+
+			try {
+				String sqlQuery = "UPDATE invoice "
+						+ "SET invoice_price = ? "
+						+ "WHERE invoice_num = ? ";
+
+				PreparedStatement ps = connection.prepareStatement(sqlQuery);
+
+				ps.setFloat(1, invoice_price);
+				ps.setInt(2, invoice_num);
+
+				ps.executeUpdate();
+
+				success = true;
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		}
+		
+		return success;
+	}
+	
+	public boolean updateOrderPrice(int order_num, float order_price) {
+		
+		boolean success = false;
+		
+		synchronized (connection) {
+
+			try {
+				String sqlQuery = "UPDATE orders "
+						+ "SET order_price = ? "
+						+ "WHERE order_num = ? ";
+
+				PreparedStatement ps = connection.prepareStatement(sqlQuery);
+
+				ps.setFloat(1, order_price);
+				ps.setInt(2, order_num);
+
+				ps.executeUpdate();
+
+				success = true;
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
 		}
 		
 		return success;

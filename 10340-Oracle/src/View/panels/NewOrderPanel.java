@@ -50,9 +50,11 @@ public class NewOrderPanel extends SalePanel {
 		if (tableModel.getRowCount() < 1) {
 			String msg = "ERROR: Order with no lines";
 			JOptionPane.showMessageDialog(null, msg, "Error",JOptionPane.ERROR_MESSAGE);
+			return;
 		}
 
 		float order_price = 0;
+		int line_num = 1;
 		
 		for (int i = 0; i < tableModel.getRowCount(); i++) {
 
@@ -64,11 +66,13 @@ public class NewOrderPanel extends SalePanel {
 				int discount = (int) tableModel.getValueAt(i, DISCOUNT_COL);
 				float fprice = (float) tableModel.getValueAt(i, FPRICE_COL);
 
-				order.addLine(new OrderLine(i + 1, item, quantity, price, discount, fprice));
+				order.addLine(new OrderLine(line_num++, item, quantity, price, discount, fprice));
 				
 				order_price += fprice;
 			}
 		}
+		
+		order.setPrice(order_price);
 
 		boolean success1 = mainFrame.getDB().addOrderLines(order);
 		boolean success2 = mainFrame.getDB().updateOrderPrice(order.getNum(), order_price);

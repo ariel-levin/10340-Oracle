@@ -148,10 +148,7 @@ public class OracleDB {
 				float price = rs.getFloat("item_price");
 				Blob img = rs.getBlob("item_img");
 				
-				int wh_num = rs.getInt("wh_num");
-				Warehouse wh = getWarehouseByNum(wh_num);
-				
-				item = new Item(item_num, name, desc, price, img, wh);
+				item = new Item(item_num, name, desc, price, img);
 				
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -348,15 +345,11 @@ public class OracleDB {
 				
 				while (rs.next()) {
 					
-					int wh_num = rs.getInt("wh_num");
-					Warehouse wh = getWarehouseByNum(wh_num);
-					
 					list.add(new Item(	rs.getInt("item_num"), 
 										rs.getString("item_name"),
 										rs.getString("item_desc"),
 										rs.getInt("item_price"),
-										rs.getBlob("item_img"),
-										wh	));
+										rs.getBlob("item_img") ));
 				}
 							
 			} catch (SQLException e) {
@@ -375,20 +368,20 @@ public class OracleDB {
 			try {
 				String sqlQuery = "SELECT * FROM orders WHERE order_status LIKE 'open'";
 
-				PreparedStatement ps1 = connection.prepareStatement(sqlQuery);
+				PreparedStatement ps = connection.prepareStatement(sqlQuery);
 				
-				ResultSet rs1 = ps1.executeQuery();
+				ResultSet rs = ps.executeQuery();
 				
-				while (rs1.next()) {
+				while (rs.next()) {
 					
-					int order_num = rs1.getInt("order_num");
-					java.sql.Date date = rs1.getDate("order_date");
+					int order_num = rs.getInt("order_num");
+					java.sql.Date date = rs.getDate("order_date");
 					
-					int customer_num = rs1.getInt("customer_num");
+					int customer_num = rs.getInt("customer_num");
 					Customer customer = getCustomerByNum(customer_num);
 					
-					float price = rs1.getFloat("order_price");
-					String status = rs1.getString("order_status");
+					float price = rs.getFloat("order_price");
+					String status = rs.getString("order_status");
 					
 					list.add( new Order(order_num, date, customer, price, status) );
 				}
@@ -400,7 +393,75 @@ public class OracleDB {
 		
 		return list;
 	}
-	
+
+	public ArrayList<Order> getAllOrders() {
+		
+		ArrayList<Order> list = new ArrayList<Order>();
+		
+		synchronized (connection) {
+			try {
+				String sqlQuery = "SELECT * FROM orders";
+
+				PreparedStatement ps = connection.prepareStatement(sqlQuery);
+				
+				ResultSet rs = ps.executeQuery();
+				
+				while (rs.next()) {
+					
+					int order_num = rs.getInt("order_num");
+					java.sql.Date date = rs.getDate("order_date");
+					
+					int customer_num = rs.getInt("customer_num");
+					Customer customer = getCustomerByNum(customer_num);
+					
+					float price = rs.getFloat("order_price");
+					String status = rs.getString("order_status");
+					
+					list.add( new Order(order_num, date, customer, price, status) );
+				}
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return list;
+	}
+
+	public ArrayList<Invoice> getAllInvoice() {
+		
+		ArrayList<Invoice> list = new ArrayList<Invoice>();
+		
+		synchronized (connection) {
+			try {
+				String sqlQuery = "SELECT * FROM invoice";
+
+				PreparedStatement ps = connection.prepareStatement(sqlQuery);
+				
+				ResultSet rs = ps.executeQuery();
+				
+				while (rs.next()) {
+					
+					int invoice_num = rs.getInt("invoice_num");
+					
+					java.sql.Date date = rs.getDate("invoice_date");
+					
+					int customer_num = rs.getInt("customer_num");
+					Customer customer = getCustomerByNum(customer_num);
+					
+					float price = rs.getFloat("invoice_price");
+					
+					list.add( new Invoice(invoice_num, null, date, customer, price) );
+				}
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return list;
+	}
+
 	public int getCurrentOrderNum() {
 		
 		int max = -1;
@@ -566,6 +627,99 @@ public class OracleDB {
 					e.printStackTrace();
 				}
 			}
+		}
+		
+		return success;
+	}
+
+	public boolean deleteOrderLines(Order order) {
+		
+		boolean success = false;
+		
+		synchronized (connection) {
+			
+			try {
+				String sqlQuery = "DELETE FROM orders_lines WHERE order_num = ?";
+
+				PreparedStatement ps = connection.prepareStatement(sqlQuery);
+
+				ps.setInt(1, order.getNum());
+				
+				ps.executeUpdate();
+				
+				success = true;
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		
+		}
+		
+		return success;
+	}
+
+	public boolean deleteOrder(Order order) {
+		
+		boolean success = false;
+		
+		synchronized (connection) {
+			
+			try {
+				String sqlQuery = "DELETE FROM orders WHERE order_num = ?";
+
+				PreparedStatement ps = connection.prepareStatement(sqlQuery);
+
+				ps.setInt(1, order.getNum());
+				
+				ps.executeUpdate();
+				
+				success = true;
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		
+		}
+		
+		return success;
+	}
+	
+	public boolean getOrderLines(Order order) {
+		
+		boolean success = false;
+		
+		synchronized (connection) {
+			
+			try {
+				String sqlQuery = "SELECT * FROM orders_lines "
+						+ "WHERE order_num = ?"
+						+ "ORDER BY line_num ASC";
+
+				PreparedStatement ps = connection.prepareStatement(sqlQuery);
+				
+				ps.setInt(1, order.getNum());
+				
+				ResultSet rs = ps.executeQuery();
+				
+				while (rs.next()) {
+					
+					int num = rs.getInt("line_num");
+					
+					int item_num = rs.getInt("item_num");
+					Item item = getItemByNum(item_num);
+					
+					int quantity = rs.getInt("line_quantity");
+					float price = rs.getFloat("line_price");
+					int discount = rs.getInt("line_discount");
+					float finalPrice = rs.getFloat("line_final_price");
+					
+					order.addLine( new OrderLine(num, item, quantity, price, discount, finalPrice) );
+				}
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			
 		}
 		
 		return success;

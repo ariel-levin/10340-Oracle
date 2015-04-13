@@ -9,17 +9,14 @@ public class Item {
 	private String 		desc;
 	private float 		price;
 	private Blob 		img;
-	private Warehouse 	warehouse;
 	
 
-	public Item(int num, String name, String desc, float price, Blob img,
-			Warehouse warehouse) {
+	public Item(int num, String name, String desc, float price, Blob img) {
 		this.num = num;
 		this.name = name;
 		this.desc = desc;
 		this.price = price;
 		this.img = img;
-		this.warehouse = warehouse;
 	}
 
 	
@@ -62,15 +59,7 @@ public class Item {
 	public void setImg(Blob img) {
 		this.img = img;
 	}
-
-	public Warehouse getWarehouse() {
-		return warehouse;
-	}
-
-	public void setWarehouse(Warehouse warehouse) {
-		this.warehouse = warehouse;
-	}
-
+	
 	
 	@Override
 	public String toString() {

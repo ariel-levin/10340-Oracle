@@ -89,6 +89,10 @@ public class Order {
 		return lines.size();
 	}
 	
+	public void removeLines() {
+		this.lines = new ArrayList<OrderLine>();
+	}
+	
 	
 	@Override
 	public String toString() {

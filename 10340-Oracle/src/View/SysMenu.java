@@ -15,9 +15,22 @@ public class SysMenu extends JMenuBar {
 	
 	private static final long serialVersionUID = 1L;
 
+	private MainFrame mainFrame;
+	
 	
 	public SysMenu(MainFrame mainFrame) {
+		
+		this.mainFrame = mainFrame;
 				
+		createFileMenu();
+		createOrderMenu();
+		createInvoiceMenu();
+		createReportsMenu();
+		createHelpMenu();
+	}
+	
+	private void createFileMenu() {
+	
 		JMenu fileMenu = new JMenu("File");
 		
 		JMenuItem exitMenuItem = new JMenuItem("Exit");
@@ -31,17 +44,18 @@ public class SysMenu extends JMenuBar {
 		fileMenu.add(exitMenuItem);
 		
 		this.add(fileMenu);
-		
-		/////////////////////////////////////////////////////////////////////////////////////
+	}
+	
+	private void createOrderMenu() {
 		
 		JMenu orderMenu = new JMenu("Order");
 		
-		JMenuItem searchOrderItem = new JMenuItem("Search/Update Order");
+		JMenuItem searchOrderItem = new JMenuItem("Search Order");
 		searchOrderItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
-				
+				new SearchOrderForm(mainFrame);
 			}
 		});
 		orderMenu.add(searchOrderItem);
@@ -56,19 +70,30 @@ public class SysMenu extends JMenuBar {
 		});
 		orderMenu.add(newOrderItem);
 		
+		JMenuItem updateOrderItem = new JMenuItem("Update Order");
+		updateOrderItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				new UpdateOrderForm(mainFrame);
+			}
+		});
+		orderMenu.add(updateOrderItem);
+
 		JMenuItem cancelOrderItem = new JMenuItem("Cancel Order");
 		cancelOrderItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
-				
+				new CancelOrderForm(mainFrame);
 			}
 		});
 		orderMenu.add(cancelOrderItem);
 		
 		this.add(orderMenu);
-		
-		/////////////////////////////////////////////////////////////////////////////////////		
+	}
+	
+	private void createInvoiceMenu() {
 		
 		JMenu invoiceMenu = new JMenu("Invoice");
 		
@@ -77,7 +102,7 @@ public class SysMenu extends JMenuBar {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
-				
+				new SearchInvoiceForm(mainFrame);
 			}
 		});
 		invoiceMenu.add(searchInvoiceItem);
@@ -102,20 +127,21 @@ public class SysMenu extends JMenuBar {
 		});
 		invoiceMenu.add(invoiceFromOrderItem);
 		
-		JMenuItem cancelInvoiceItem = new JMenuItem("Cancel Invoice");
-		cancelInvoiceItem.addActionListener(new ActionListener() {
+		JMenuItem creditInvoiceItem = new JMenuItem("Credit Invoice");
+		creditInvoiceItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
-				
+				new RefundInvoiceForm(mainFrame);
 			}
 		});
-		invoiceMenu.add(cancelInvoiceItem);
+		invoiceMenu.add(creditInvoiceItem);
 		
 		this.add(invoiceMenu);
-		
-		/////////////////////////////////////////////////////////////////////////////////////
+	}
 
+	private void createReportsMenu() {
+		
 		JMenu reportMenu = new JMenu("Reports/Queries");
 		
 		JMenuItem itemBalanceItem = new JMenuItem("Items/Warehouse Balance");
@@ -159,9 +185,10 @@ public class SysMenu extends JMenuBar {
 		reportMenu.add(salesItem);
 		
 		this.add(reportMenu);
-		
-		/////////////////////////////////////////////////////////////////////////////////////
+	}
 
+	private void createHelpMenu() {
+		
 		JMenu helpMenu = new JMenu("Help");
 		
 		JMenuItem aboutItem = new JMenuItem("About");
@@ -180,7 +207,6 @@ public class SysMenu extends JMenuBar {
 		helpMenu.add(aboutItem);
 		
 		this.add(helpMenu);
-		
 	}
 	
 }

@@ -40,7 +40,8 @@ public class SalePanel extends JPanel {
 	protected MainFrame 			mainFrame;
 	protected DefaultTableModel 	tableModel;
 	protected JLabel				lblNum, lblDate, lblCustomer;
-	protected JButton				btnCommit;
+	protected JButton				btnCommit, btnAdd, btnRem;
+	protected JPanel				northPanel, eastPanel, northBtnPanel;
 	protected JTable 				table;
 	
 	
@@ -56,21 +57,21 @@ public class SalePanel extends JPanel {
 		setLayout(new BorderLayout());
 		setPreferredSize(mainFrame.getSize());
 		
-		JPanel eastPanel = new JPanel();
+		eastPanel = new JPanel();
 		BoxLayout boxLayout = new BoxLayout(eastPanel, BoxLayout.Y_AXIS);
 		
 		eastPanel.setLayout(boxLayout);
-		JButton btnAdd = new JButton("Add Line");
+		btnAdd = new JButton("Add Line");
 		btnAdd.setAlignmentX(Component.CENTER_ALIGNMENT);
 		eastPanel.add(btnAdd);
 		eastPanel.add(Box.createRigidArea(new Dimension(0,15)));
-		JButton btnRem = new JButton("Remove Line");
+		btnRem = new JButton("Remove Line");
 		btnRem.setAlignmentX(Component.CENTER_ALIGNMENT);
 		eastPanel.add(btnRem);
 		eastPanel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
 
-		JPanel northPanel = new JPanel();
-		lblNum = new JLabel();
+		northPanel = new JPanel();
+		lblNum = new JLabel(type + " Num: ");
 		EmptyBorder border = new EmptyBorder(5, 50, 5, 0);
 		lblDate = new JLabel("Date: ");
 		lblDate.setBorder(border);
@@ -79,10 +80,10 @@ public class SalePanel extends JPanel {
 		northPanel.add(lblNum);
 		northPanel.add(lblDate);
 		northPanel.add(lblCustomer);
-		JPanel northBtnPanel = new JPanel();
+		northBtnPanel = new JPanel();
 		btnCommit = new JButton("Commit " + type);
 		northBtnPanel.add(btnCommit);
-		JButton btnCancel = new JButton("Cancel " + type);
+		JButton btnCancel = new JButton("Cancel");
 		northBtnPanel.add(btnCancel);
 		northBtnPanel.setBorder(border);
 		northPanel.add(northBtnPanel);
@@ -131,8 +132,7 @@ public class SalePanel extends JPanel {
 		String[] columnNames = { "Item", "Quantity", "Price", "Discount(%)", "Final Price" };
 
 		tableModel = new DefaultTableModel(columnNames, 1);
-		tableModel
-				.addTableModelListener(new SalesTableModelListener(tableModel));
+		tableModel.addTableModelListener(new SalesTableModelListener(tableModel));
 		table.setModel(tableModel);
 
 		ArrayList<Item> items = mainFrame.getDB().getAllItems();
@@ -144,6 +144,7 @@ public class SalePanel extends JPanel {
 		TableColumn itemsColumn = table.getColumnModel().getColumn(0);
 		itemsColumn.setCellEditor(new DefaultCellEditor(cb_items));
 
+		table.getTableHeader().setReorderingAllowed(false);
 	}
 
 }

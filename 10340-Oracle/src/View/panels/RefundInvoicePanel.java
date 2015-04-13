@@ -3,37 +3,44 @@ package view.panels;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+
 import javax.swing.BorderFactory;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.border.EmptyBorder;
 
 import view.MainFrame;
 import model.*;
 
 
-public class NewInvoicePanel extends SalePanel {
+public class RefundInvoicePanel extends SalePanel {
 
 	private static final long serialVersionUID = 1L;
 
-	private Invoice invoice;
+	private Invoice invoice, refundInvoice;
 
 	
-	public NewInvoicePanel(MainFrame mainFrame) {
+	public RefundInvoicePanel(MainFrame mainFrame, Invoice refundInvoice) {
 
 		super(mainFrame, "Invoice");
 
+		this.refundInvoice = mainFrame.getDB().getInvoiceByNum(refundInvoice.getNum());
+		
 		int invoice_num = mainFrame.getDB().getCurrentInvoiceNum();
 		this.invoice = mainFrame.getDB().getInvoiceByNum(invoice_num);
+		
+		this.invoice.setPrice(-refundInvoice.getPrice());
 
 		initPanel();
+		loadInvoiceLines();
 		
-		if (invoice.getOrder() != null)
-			loadOrderLines();
+		table.setEnabled(false);
 	}
 
 	
 	private void initPanel() {
 
-		setBorder(BorderFactory.createTitledBorder("New Invoice: " + invoice.getNum()));
+		setBorder(BorderFactory.createTitledBorder("New Refund Invoice: " + invoice.getNum()));
 
 		lblNum.setText("Invoice Number: " + invoice.getNum());
 		lblDate.setText(lblDate.getText() + invoice.getDate());
@@ -46,16 +53,32 @@ public class NewInvoicePanel extends SalePanel {
 			}
 		});
 
+		btnAdd.setEnabled(false);
+		btnAdd.setVisible(false);
+		btnRem.setEnabled(false);
+		btnRem.setVisible(false);
+		eastPanel.setVisible(false);
+		
+		northPanel.remove(northBtnPanel);
+		EmptyBorder border = new EmptyBorder(5, 50, 5, 0);
+		JLabel lblPrice = new JLabel("Price: " + invoice.getPrice());
+		lblPrice.setBorder(border);
+		northPanel.add(lblPrice);
+		JLabel lblRefund = new JLabel("Refunding Invoice Number: " + refundInvoice.getNum());
+		lblRefund.setBorder(border);
+		northPanel.add(lblRefund);
+		northPanel.add(northBtnPanel);
+
 	}
 	
-	private void loadOrderLines() {
+	private void loadInvoiceLines() {
 		tableModel.removeRow(0);
-		ArrayList<OrderLine> list = invoice.getOrder().getLines();
+		ArrayList<InvoiceLine> list = refundInvoice.getLines();
 		
-		for (OrderLine line : list) {
+		for (InvoiceLine line : list) {
 			tableModel.addRow(new Object[] { line.getItem(),
-					line.getQuantity(), line.getPrice(), line.getDiscount(),
-					line.getFinalPrice() });
+					-line.getQuantity(), line.getPrice(), line.getDiscount(),
+					-line.getFinalPrice() });
 		}
 	}
 
@@ -90,13 +113,10 @@ public class NewInvoicePanel extends SalePanel {
 		
 		boolean success1 = mainFrame.getDB().addInvoiceLines(invoice);
 		boolean success2 = mainFrame.getDB().updateInvoicePrice(invoice.getNum(), invoice_price);
-		boolean success3 = true;
-		
-		if (invoice.getOrder() != null)
-			success3 = mainFrame.getDB().closeOrder(invoice.getOrder().getNum());
 
-		if (success1 && success2 && success3) {
-			String msg = "The Invoice was commited successfully";
+		if (success1 && success2) {
+			String msg = "Source Invoice: " + refundInvoice.getNum() + " was refunded successfully\n"
+					+ "by Current Invoice: " + invoice.getNum();
 			JOptionPane.showMessageDialog(null, msg, "Success",JOptionPane.INFORMATION_MESSAGE);
 		} else {
 			String msg = "Some error occurred...";

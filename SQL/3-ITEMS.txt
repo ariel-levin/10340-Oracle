@@ -4,7 +4,6 @@ CREATE table "ITEMS" (
     "ITEM_DESC"  VARCHAR2(1024),
     "ITEM_PRICE" FLOAT NOT NULL,
     "ITEM_IMG"   BLOB,
-    "WH_NUM"     NUMBER NOT NULL,
     constraint  "ITEMS_PK" primary key ("ITEM_NUM")
 )
 /
@@ -20,11 +19,4 @@ begin
     select "ITEMS_SEQ".nextval into :NEW."ITEM_NUM" from dual;
   end if;
 end;
-/   
-
-ALTER TABLE "ITEMS" ADD CONSTRAINT "ITEMS_WH_FK" 
-FOREIGN KEY ("WH_NUM")
-REFERENCES "WAREHOUSES" ("WH_NUM")
-ON DELETE CASCADE
-
 /

@@ -3,6 +3,7 @@ package view.panels;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+
 import javax.swing.BorderFactory;
 import javax.swing.JOptionPane;
 
@@ -10,39 +11,40 @@ import view.MainFrame;
 import model.*;
 
 
-public class NewInvoicePanel extends SalePanel {
+public class UpdateOrderPanel extends SalePanel {
 
 	private static final long serialVersionUID = 1L;
 
-	private Invoice invoice;
+	private Order order;
 
 	
-	public NewInvoicePanel(MainFrame mainFrame) {
+	public UpdateOrderPanel(MainFrame mainFrame, Order order) {
 
-		super(mainFrame, "Invoice");
+		super(mainFrame, "Order");
 
-		int invoice_num = mainFrame.getDB().getCurrentInvoiceNum();
-		this.invoice = mainFrame.getDB().getInvoiceByNum(invoice_num);
+		this.order = order;
+		mainFrame.getDB().getOrderLines(order);
 
 		initPanel();
 		
-		if (invoice.getOrder() != null)
-			loadOrderLines();
+		loadOrderLines();
 	}
 
 	
 	private void initPanel() {
 
-		setBorder(BorderFactory.createTitledBorder("New Invoice: " + invoice.getNum()));
+		setBorder(BorderFactory.createTitledBorder("Order: " + order.getNum()));
 
-		lblNum.setText("Invoice Number: " + invoice.getNum());
-		lblDate.setText(lblDate.getText() + invoice.getDate());
-		lblCustomer.setText(invoice.getCustomer().toString());
+		lblNum.setText(lblNum.getText() + order.getNum());
+		lblDate.setText(lblDate.getText() + order.getDate());
+		lblCustomer.setText(order.getCustomer().toString());
+		
+		btnCommit.setText("Update Order");
 
 		btnCommit.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				commitInvoice();
+				updateOrder();
 			}
 		});
 
@@ -50,7 +52,7 @@ public class NewInvoicePanel extends SalePanel {
 	
 	private void loadOrderLines() {
 		tableModel.removeRow(0);
-		ArrayList<OrderLine> list = invoice.getOrder().getLines();
+		ArrayList<OrderLine> list = order.getLines();
 		
 		for (OrderLine line : list) {
 			tableModel.addRow(new Object[] { line.getItem(),
@@ -59,17 +61,19 @@ public class NewInvoicePanel extends SalePanel {
 		}
 	}
 
-	private void commitInvoice() {
-		
+	private void updateOrder() {
+
 		if (tableModel.getRowCount() < 1) {
-			String msg = "ERROR: Invoice with no lines";
+			String msg = "ERROR: Order with no lines";
 			JOptionPane.showMessageDialog(null, msg, "Error",JOptionPane.ERROR_MESSAGE);
 			return;
 		}
+		
+		order.removeLines();
 
-		float invoice_price = 0;
+		float order_price = 0;
 		int line_num = 1;
-
+		
 		for (int i = 0; i < tableModel.getRowCount(); i++) {
 
 			if (tableModel.getValueAt(i, ITEM_COL) != null) {
@@ -80,23 +84,20 @@ public class NewInvoicePanel extends SalePanel {
 				int discount = (int) tableModel.getValueAt(i, DISCOUNT_COL);
 				float fprice = (float) tableModel.getValueAt(i, FPRICE_COL);
 
-				invoice.addLine(new InvoiceLine(line_num++, item, quantity, price, discount, fprice));
+				order.addLine(new OrderLine(line_num++, item, quantity, price, discount, fprice));
 				
-				invoice_price += fprice;
+				order_price += fprice;
 			}
 		}
 		
-		invoice.setPrice(invoice_price);
-		
-		boolean success1 = mainFrame.getDB().addInvoiceLines(invoice);
-		boolean success2 = mainFrame.getDB().updateInvoicePrice(invoice.getNum(), invoice_price);
-		boolean success3 = true;
-		
-		if (invoice.getOrder() != null)
-			success3 = mainFrame.getDB().closeOrder(invoice.getOrder().getNum());
+		order.setPrice(order_price);
 
+		boolean success1 = mainFrame.getDB().deleteOrderLines(order);
+		boolean success2 = mainFrame.getDB().addOrderLines(order);
+		boolean success3 = mainFrame.getDB().updateOrderPrice(order.getNum(), order_price);
+		
 		if (success1 && success2 && success3) {
-			String msg = "The Invoice was commited successfully";
+			String msg = "The Order was updated successfully";
 			JOptionPane.showMessageDialog(null, msg, "Success",JOptionPane.INFORMATION_MESSAGE);
 		} else {
 			String msg = "Some error occurred...";

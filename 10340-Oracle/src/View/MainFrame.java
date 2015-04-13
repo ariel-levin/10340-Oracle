@@ -2,11 +2,13 @@ package view;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -120,6 +122,23 @@ public class MainFrame extends JFrame {
 	public void newInvoiceFromOrder(Order o) {
 		db.addNewInvoiceFromOrder(o);
 		changePanel(new NewInvoicePanel(this));
+	}
+	
+	public void updateOrder(Order o) {
+		changePanel(new UpdateOrderPanel(this, o));
+	}
+	
+	public void showOrder(Order o) {
+		changePanel(new ShowOrderPanel(this, o));
+	}
+	
+	public void showInvoice(Invoice inv) {
+		changePanel(new ShowInvoicePanel(this, inv));
+	}
+	
+	public void refundInvoice(Invoice inv) {
+		db.addNewInvoice(inv.getCustomer());
+		changePanel(new RefundInvoicePanel(this, inv));
 	}
 	
 }

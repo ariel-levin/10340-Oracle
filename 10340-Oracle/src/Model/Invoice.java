@@ -94,11 +94,9 @@ public class Invoice {
 		return lines.size();
 	}
 	
-
-	@Override
+	
 	public String toString() {
-		return "Invoice [num=" + num + ", order=" + order + ", date=" + date
-				+ ", customer=" + customer + ", price=" + price + "]";
+		return num + " | " + customer + " | " + date + " | " + price + "¤";
 	}
 	
 }

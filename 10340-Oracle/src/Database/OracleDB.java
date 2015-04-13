@@ -7,15 +7,27 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import javax.swing.JOptionPane;
 
 import model.*;
 
 
+/**
+ * 
+ * @author 	Ariel Levin
+ * 			<br/><a href="http://about.me/ariel.levin">about.me/ariel.levin</a>
+ * 			<br/><a href="mailto:ariel.lvn89@gmail.com">ariel.lvn89@gmail.com</a><br/><br/>
+ * 
+ * 			Matan Shulman
+ * 			<br/><a href="mailto:matan.shulman87@gmail.com">matan.shulman87@gmail.com</a>
+ *
+ */
 public class OracleDB {
 
-	private Connection connection;
-	private String dbUrl;
+	private Connection 			connection;
+	private PreparedStatement 	ps;
+	private String 				dbUrl;
 	
 	
 	public boolean openConnection() {
@@ -62,17 +74,19 @@ public class OracleDB {
 
 	public Customer getCustomerByNum(int customer_num) {
 		
+		ResultSet rs = null;
 		Customer c = null;
 		
 		synchronized (connection) {
 			try {
-				String sqlQuery = "SELECT * FROM customers WHERE customer_num = ?";
+				String sqlQuery = "SELECT * FROM customers "
+								+ "WHERE customer_num = ?";
 
-				PreparedStatement ps = connection.prepareStatement(sqlQuery);
+				ps = connection.prepareStatement(sqlQuery);
 				
 				ps.setInt(1, customer_num);
 				
-				ResultSet rs = ps.executeQuery();
+				rs = ps.executeQuery();
 				
 				if (!rs.next())
 					return c;
@@ -88,6 +102,9 @@ public class OracleDB {
 				
 			} catch (SQLException e) {
 				e.printStackTrace();
+			} finally {
+				try { rs.close(); ps.close(); }
+				catch (Exception e1) {}
 			}
 		}
 		
@@ -96,17 +113,18 @@ public class OracleDB {
 
 	public Warehouse getWarehouseByNum(int wh_num) {
 		
+		ResultSet rs = null;
 		Warehouse wh = null;
 		
 		synchronized (connection) {
 			try {
 				String sqlQuery = "SELECT * FROM warehouses WHERE wh_num = ?";
 
-				PreparedStatement ps = connection.prepareStatement(sqlQuery);
+				ps = connection.prepareStatement(sqlQuery);
 				
 				ps.setInt(1, wh_num);
 				
-				ResultSet rs = ps.executeQuery();
+				rs = ps.executeQuery();
 				
 				if (!rs.next())
 					return wh;
@@ -120,6 +138,9 @@ public class OracleDB {
 				
 			} catch (SQLException e) {
 				e.printStackTrace();
+			} finally {
+				try { rs.close(); ps.close(); }
+				catch (Exception e1) {}
 			}
 		}
 		
@@ -128,17 +149,18 @@ public class OracleDB {
 
 	public Item getItemByNum(int item_num) {
 		
+		ResultSet rs = null;
 		Item item = null;
 		
 		synchronized (connection) {
 			try {
 				String sqlQuery = "SELECT * FROM items WHERE item_num = ?";
 
-				PreparedStatement ps = connection.prepareStatement(sqlQuery);
+				ps = connection.prepareStatement(sqlQuery);
 				
 				ps.setInt(1, item_num);
 				
-				ResultSet rs = ps.executeQuery();
+				rs = ps.executeQuery();
 				
 				if (!rs.next())
 					return item;
@@ -152,6 +174,9 @@ public class OracleDB {
 				
 			} catch (SQLException e) {
 				e.printStackTrace();
+			} finally {
+				try { rs.close(); ps.close(); }
+				catch (Exception e1) {}
 			}
 		}
 		
@@ -160,17 +185,18 @@ public class OracleDB {
 		
 	public Order getOrderByNum(int order_num) {
 		
+		ResultSet rs = null;
 		Order order = null;
 		
 		synchronized (connection) {
 			try {
 				String sqlQuery = "SELECT * FROM orders WHERE order_num = ?";
 
-				PreparedStatement ps = connection.prepareStatement(sqlQuery);
+				ps = connection.prepareStatement(sqlQuery);
 				
 				ps.setInt(1, order_num);
 				
-				ResultSet rs = ps.executeQuery();
+				rs = ps.executeQuery();
 				
 				if (!rs.next())
 					return order;
@@ -187,6 +213,9 @@ public class OracleDB {
 				
 			} catch (SQLException e) {
 				e.printStackTrace();
+			} finally {
+				try { rs.close(); ps.close(); }
+				catch (Exception e1) {}
 			}
 			
 			try {
@@ -194,11 +223,11 @@ public class OracleDB {
 						+ "WHERE order_num = ?"
 						+ "ORDER BY line_num ASC";
 
-				PreparedStatement ps = connection.prepareStatement(sqlQuery);
+				ps = connection.prepareStatement(sqlQuery);
 				
 				ps.setInt(1, order_num);
 				
-				ResultSet rs = ps.executeQuery();
+				rs = ps.executeQuery();
 				
 				while (rs.next()) {
 					
@@ -218,6 +247,9 @@ public class OracleDB {
 				
 			} catch (SQLException e) {
 				e.printStackTrace();
+			} finally {
+				try { rs.close(); ps.close(); }
+				catch (Exception e1) {}
 			}
 		}
 		
@@ -226,17 +258,18 @@ public class OracleDB {
 	
 	public Invoice getInvoiceByNum(int invoice_num) {
 		
+		ResultSet rs = null;
 		Invoice inv = null;
 		
 		synchronized (connection) {
 			try {
 				String sqlQuery = "SELECT * FROM invoice WHERE invoice_num = ?";
 
-				PreparedStatement ps = connection.prepareStatement(sqlQuery);
+				ps = connection.prepareStatement(sqlQuery);
 				
 				ps.setInt(1, invoice_num);
 				
-				ResultSet rs = ps.executeQuery();
+				rs = ps.executeQuery();
 				
 				if (!rs.next())
 					return inv;
@@ -264,6 +297,9 @@ public class OracleDB {
 				
 			} catch (SQLException e) {
 				e.printStackTrace();
+			} finally {
+				try { rs.close(); ps.close(); }
+				catch (Exception e1) {}
 			}
 			
 			try {
@@ -271,11 +307,11 @@ public class OracleDB {
 						+ "WHERE invoice_num = ?"
 						+ "ORDER BY line_num ASC";
 
-				PreparedStatement ps = connection.prepareStatement(sqlQuery);
+				ps = connection.prepareStatement(sqlQuery);
 				
 				ps.setInt(1, invoice_num);
 				
-				ResultSet rs = ps.executeQuery();
+				rs = ps.executeQuery();
 				
 				while (rs.next()) {
 					
@@ -295,6 +331,9 @@ public class OracleDB {
 				
 			} catch (SQLException e) {
 				e.printStackTrace();
+			} finally {
+				try { rs.close(); ps.close(); }
+				catch (Exception e1) {}
 			}
 		}
 		
@@ -303,15 +342,16 @@ public class OracleDB {
 	
 	public ArrayList<Customer> getAllCustomers() {
 		
+		ResultSet rs = null;
 		ArrayList<Customer> list = new ArrayList<Customer>();
 		
 		synchronized (connection) {
 			try {
 				String sqlQuery = "SELECT * FROM customers";
 
-				PreparedStatement ps = connection.prepareStatement(sqlQuery);
+				ps = connection.prepareStatement(sqlQuery);
 				
-				ResultSet rs = ps.executeQuery();
+				rs = ps.executeQuery();
 				
 				while (rs.next()) {
 					list.add(new Customer(	rs.getInt("customer_num"), 
@@ -325,6 +365,9 @@ public class OracleDB {
 							
 			} catch (SQLException e) {
 				e.printStackTrace();
+			} finally {
+				try { rs.close(); ps.close(); }
+				catch (Exception e1) {}
 			}
 		}
 		
@@ -333,15 +376,16 @@ public class OracleDB {
 	
 	public ArrayList<Item> getAllItems() {
 		
+		ResultSet rs = null;
 		ArrayList<Item> list = new ArrayList<Item>();
 		
 		synchronized (connection) {
 			try {
 				String sqlQuery = "SELECT * FROM items";
 
-				PreparedStatement ps = connection.prepareStatement(sqlQuery);
+				ps = connection.prepareStatement(sqlQuery);
 				
-				ResultSet rs = ps.executeQuery();
+				rs = ps.executeQuery();
 				
 				while (rs.next()) {
 					
@@ -354,6 +398,9 @@ public class OracleDB {
 							
 			} catch (SQLException e) {
 				e.printStackTrace();
+			} finally {
+				try { rs.close(); ps.close(); }
+				catch (Exception e1) {}
 			}
 		}
 		
@@ -362,15 +409,16 @@ public class OracleDB {
 
 	public ArrayList<Warehouse> getAllWarehouses() {
 		
+		ResultSet rs = null;
 		ArrayList<Warehouse> list = new ArrayList<Warehouse>();
 		
 		synchronized (connection) {
 			try {
 				String sqlQuery = "SELECT * FROM warehouses";
 
-				PreparedStatement ps = connection.prepareStatement(sqlQuery);
+				ps = connection.prepareStatement(sqlQuery);
 				
-				ResultSet rs = ps.executeQuery();
+				rs = ps.executeQuery();
 				
 				while (rs.next()) {
 					
@@ -383,6 +431,9 @@ public class OracleDB {
 							
 			} catch (SQLException e) {
 				e.printStackTrace();
+			} finally {
+				try { rs.close(); ps.close(); }
+				catch (Exception e1) {}
 			}
 		}
 		
@@ -391,15 +442,18 @@ public class OracleDB {
 	
 	public ArrayList<Order> getAllOpenOrders() {
 		
+		ResultSet rs = null;
 		ArrayList<Order> list = new ArrayList<Order>();
 		
 		synchronized (connection) {
 			try {
-				String sqlQuery = "SELECT * FROM orders WHERE order_status LIKE 'open'";
+				String sqlQuery = "SELECT * FROM orders "
+								+ "WHERE order_status LIKE 'open' "
+								+ "ORDER BY order_num ASC";
 
-				PreparedStatement ps = connection.prepareStatement(sqlQuery);
+				ps = connection.prepareStatement(sqlQuery);
 				
-				ResultSet rs = ps.executeQuery();
+				rs = ps.executeQuery();
 				
 				while (rs.next()) {
 					
@@ -417,23 +471,73 @@ public class OracleDB {
 				
 			} catch (SQLException e) {
 				e.printStackTrace();
+			} finally {
+				try { rs.close(); ps.close(); }
+				catch (Exception e1) {}
 			}
 		}
 		
 		return list;
 	}
 
-	public ArrayList<Order> getAllOrders() {
+	public ArrayList<Order> getAllOpenOrders(Customer customer) {
 		
+		ResultSet rs = null;
 		ArrayList<Order> list = new ArrayList<Order>();
 		
 		synchronized (connection) {
 			try {
-				String sqlQuery = "SELECT * FROM orders";
+				String sqlQuery = "SELECT * FROM orders "
+								+ "WHERE order_status LIKE 'open' "
+								+ "AND customer_num = ? "
+								+ "ORDER BY order_num ASC";
 
-				PreparedStatement ps = connection.prepareStatement(sqlQuery);
+				ps = connection.prepareStatement(sqlQuery);
 				
-				ResultSet rs = ps.executeQuery();
+				ps.setInt(1, customer.getNum());
+				
+				rs = ps.executeQuery();
+				
+				while (rs.next()) {
+					
+					int order_num = rs.getInt("order_num");
+					java.sql.Date date = rs.getDate("order_date");
+					
+					float price = rs.getFloat("order_price");
+					String status = rs.getString("order_status");
+					
+					list.add( new Order(order_num, date, customer, price, status) );
+				}
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				try { rs.close(); ps.close(); }
+				catch (Exception e1) {}
+			}
+		}
+		
+		return list;
+	}
+	
+	public ArrayList<Order> getAllOpenOrders(Calendar startDate, Calendar endDate) {
+		
+		ResultSet rs = null;
+		ArrayList<Order> list = new ArrayList<Order>();
+		
+		synchronized (connection) {
+			try {
+				String sqlQuery = "SELECT * FROM orders "
+								+ "WHERE order_status LIKE 'open' "
+								+ "AND order_date BETWEEN ? AND ? "
+								+ "ORDER BY order_num ASC";
+
+				ps = connection.prepareStatement(sqlQuery);
+
+				ps.setDate(1, convertCalendarToSql(startDate));
+				ps.setDate(2, convertCalendarToSql(endDate));
+				
+				rs = ps.executeQuery();
 				
 				while (rs.next()) {
 					
@@ -451,6 +555,47 @@ public class OracleDB {
 				
 			} catch (SQLException e) {
 				e.printStackTrace();
+			} finally {
+				try { rs.close(); ps.close(); }
+				catch (Exception e1) {}
+			}
+		}
+		
+		return list;
+	}
+		
+	public ArrayList<Order> getAllOrders() {
+		
+		ResultSet rs = null;
+		ArrayList<Order> list = new ArrayList<Order>();
+		
+		synchronized (connection) {
+			try {
+				String sqlQuery = "SELECT * FROM orders";
+
+				ps = connection.prepareStatement(sqlQuery);
+				
+				rs = ps.executeQuery();
+				
+				while (rs.next()) {
+					
+					int order_num = rs.getInt("order_num");
+					java.sql.Date date = rs.getDate("order_date");
+					
+					int customer_num = rs.getInt("customer_num");
+					Customer customer = getCustomerByNum(customer_num);
+					
+					float price = rs.getFloat("order_price");
+					String status = rs.getString("order_status");
+					
+					list.add( new Order(order_num, date, customer, price, status) );
+				}
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				try { rs.close(); ps.close(); }
+				catch (Exception e1) {}
 			}
 		}
 		
@@ -459,15 +604,16 @@ public class OracleDB {
 
 	public ArrayList<Invoice> getAllInvoice() {
 		
+		ResultSet rs = null;
 		ArrayList<Invoice> list = new ArrayList<Invoice>();
 		
 		synchronized (connection) {
 			try {
 				String sqlQuery = "SELECT * FROM invoice";
 
-				PreparedStatement ps = connection.prepareStatement(sqlQuery);
+				ps = connection.prepareStatement(sqlQuery);
 				
-				ResultSet rs = ps.executeQuery();
+				rs = ps.executeQuery();
 				
 				while (rs.next()) {
 					
@@ -485,6 +631,9 @@ public class OracleDB {
 				
 			} catch (SQLException e) {
 				e.printStackTrace();
+			} finally {
+				try { rs.close(); ps.close(); }
+				catch (Exception e1) {}
 			}
 		}
 		
@@ -493,15 +642,17 @@ public class OracleDB {
 
 	public ArrayList<Stock> getStock() {
 		
+		ResultSet rs = null;
 		ArrayList<Stock> list = new ArrayList<Stock>();
 		
 		synchronized (connection) {
 			try {
-				String sqlQuery = "SELECT * FROM stock";
+				String sqlQuery = "SELECT * FROM stock "
+								+ "ORDER BY item_num ASC";
 
-				PreparedStatement ps = connection.prepareStatement(sqlQuery);
+				ps = connection.prepareStatement(sqlQuery);
 				
-				ResultSet rs = ps.executeQuery();
+				rs = ps.executeQuery();
 				
 				while (rs.next()) {
 					
@@ -518,6 +669,9 @@ public class OracleDB {
 				
 			} catch (SQLException e) {
 				e.printStackTrace();
+			} finally {
+				try { rs.close(); ps.close(); }
+				catch (Exception e1) {}
 			}
 		}
 		
@@ -526,17 +680,20 @@ public class OracleDB {
 
 	public ArrayList<Stock> getStock(Item item) {
 		
+		ResultSet rs = null;
 		ArrayList<Stock> list = new ArrayList<Stock>();
 		
 		synchronized (connection) {
 			try {
-				String sqlQuery = "SELECT * FROM stock WHERE item_num = ?";
+				String sqlQuery = "SELECT * FROM stock "
+								+ "WHERE item_num = ? "
+								+ "ORDER BY wh_num ASC";
 
-				PreparedStatement ps = connection.prepareStatement(sqlQuery);
+				ps = connection.prepareStatement(sqlQuery);
 				
 				ps.setInt(1, item.getNum());
 				
-				ResultSet rs = ps.executeQuery();
+				rs = ps.executeQuery();
 				
 				while (rs.next()) {
 					
@@ -550,6 +707,9 @@ public class OracleDB {
 				
 			} catch (SQLException e) {
 				e.printStackTrace();
+			} finally {
+				try { rs.close(); ps.close(); }
+				catch (Exception e1) {}
 			}
 		}
 		
@@ -558,17 +718,20 @@ public class OracleDB {
 	
 	public ArrayList<Stock> getStock(Warehouse wh) {
 		
+		ResultSet rs = null;
 		ArrayList<Stock> list = new ArrayList<Stock>();
 		
 		synchronized (connection) {
 			try {
-				String sqlQuery = "SELECT * FROM stock WHERE wh_num = ?";
+				String sqlQuery = "SELECT * FROM stock "
+								+ "WHERE wh_num = ? "
+								+ "ORDER BY item_num ASC";
 
-				PreparedStatement ps = connection.prepareStatement(sqlQuery);
+				ps = connection.prepareStatement(sqlQuery);
 				
 				ps.setInt(1, wh.getNum());
 				
-				ResultSet rs = ps.executeQuery();
+				rs = ps.executeQuery();
 				
 				while (rs.next()) {
 					
@@ -582,6 +745,9 @@ public class OracleDB {
 				
 			} catch (SQLException e) {
 				e.printStackTrace();
+			} finally {
+				try { rs.close(); ps.close(); }
+				catch (Exception e1) {}
 			}
 		}
 		
@@ -590,21 +756,25 @@ public class OracleDB {
 	
 	public int getCurrentOrderNum() {
 		
+		ResultSet rs = null;
 		int max = -1;
 		
 		synchronized (connection) {
 			try {
 				String sqlQuery = "select \"ORDERS_SEQ\".currval from dual";
 
-				PreparedStatement ps = connection.prepareStatement(sqlQuery);
+				ps = connection.prepareStatement(sqlQuery);
 				
-				ResultSet rs = ps.executeQuery();
+				rs = ps.executeQuery();
 				
 				rs.next();
 				max = rs.getInt(1);
 							
 			} catch (SQLException e) {
 				e.printStackTrace();
+			} finally {
+				try { rs.close(); ps.close(); }
+				catch (Exception e1) {}
 			}
 		}
 		
@@ -613,21 +783,25 @@ public class OracleDB {
 
 	public int getCurrentInvoiceNum() {
 		
+		ResultSet rs = null;
 		int max = -1;
 		
 		synchronized (connection) {
 			try {
 				String sqlQuery = "select \"INVOICE_SEQ\".currval from dual";
 
-				PreparedStatement ps = connection.prepareStatement(sqlQuery);
+				ps = connection.prepareStatement(sqlQuery);
 				
-				ResultSet rs = ps.executeQuery();
+				rs = ps.executeQuery();
 				
 				rs.next();
 				max = rs.getInt(1);
 							
 			} catch (SQLException e) {
 				e.printStackTrace();
+			} finally {
+				try { rs.close(); ps.close(); }
+				catch (Exception e1) {}
 			}
 		}
 		
@@ -644,7 +818,7 @@ public class OracleDB {
 						+ "(order_date, customer_num, order_price, order_status) "
 						+ "VALUES (?,?,?,?)";
 
-				PreparedStatement ps = connection.prepareStatement(sqlQuery);
+				ps = connection.prepareStatement(sqlQuery);
 
 				ps.setDate(1, getCurrentDate());
 				ps.setInt(2, c.getNum());
@@ -657,6 +831,9 @@ public class OracleDB {
 
 			} catch (SQLException e) {
 				e.printStackTrace();
+			} finally {
+				try { ps.close(); }
+				catch (Exception e1) {}
 			}
 		}
 		
@@ -673,7 +850,7 @@ public class OracleDB {
 						+ "(invoice_date, customer_num, invoice_price) "
 						+ "VALUES (?,?,?)";
 
-				PreparedStatement ps = connection.prepareStatement(sqlQuery);
+				ps = connection.prepareStatement(sqlQuery);
 
 				ps.setDate(1, getCurrentDate());
 				ps.setInt(2, c.getNum());
@@ -685,6 +862,9 @@ public class OracleDB {
 
 			} catch (SQLException e) {
 				e.printStackTrace();
+			} finally {
+				try { ps.close(); }
+				catch (Exception e1) {}
 			}
 		}
 		
@@ -701,7 +881,7 @@ public class OracleDB {
 						+ "(order_num, invoice_date, customer_num, invoice_price) "
 						+ "VALUES (?,?,?,?)";
 
-				PreparedStatement ps = connection.prepareStatement(sqlQuery);
+				ps = connection.prepareStatement(sqlQuery);
 
 				ps.setInt(1, o.getNum());
 				ps.setDate(2, getCurrentDate());
@@ -714,6 +894,9 @@ public class OracleDB {
 
 			} catch (SQLException e) {
 				e.printStackTrace();
+			} finally {
+				try { ps.close(); }
+				catch (Exception e1) {}
 			}
 		}
 		
@@ -735,7 +918,7 @@ public class OracleDB {
 							+ "line_discount, line_final_price) "
 							+ "VALUES (?,?,?,?,?,?,?)";
 	
-					PreparedStatement ps = connection.prepareStatement(sqlQuery);
+					ps = connection.prepareStatement(sqlQuery);
 	
 					ps.setInt(1, order.getNum());
 					ps.setInt(2, line.getNum());
@@ -751,6 +934,9 @@ public class OracleDB {
 	
 				} catch (SQLException e) {
 					e.printStackTrace();
+				} finally {
+					try { ps.close(); }
+					catch (Exception e1) {}
 				}
 			}
 		}
@@ -767,7 +953,7 @@ public class OracleDB {
 			try {
 				String sqlQuery = "DELETE FROM orders_lines WHERE order_num = ?";
 
-				PreparedStatement ps = connection.prepareStatement(sqlQuery);
+				ps = connection.prepareStatement(sqlQuery);
 
 				ps.setInt(1, order.getNum());
 				
@@ -777,6 +963,9 @@ public class OracleDB {
 
 			} catch (SQLException e) {
 				e.printStackTrace();
+			} finally {
+				try { ps.close(); }
+				catch (Exception e1) {}
 			}
 		
 		}
@@ -793,7 +982,7 @@ public class OracleDB {
 			try {
 				String sqlQuery = "DELETE FROM orders WHERE order_num = ?";
 
-				PreparedStatement ps = connection.prepareStatement(sqlQuery);
+				ps = connection.prepareStatement(sqlQuery);
 
 				ps.setInt(1, order.getNum());
 				
@@ -803,6 +992,9 @@ public class OracleDB {
 
 			} catch (SQLException e) {
 				e.printStackTrace();
+			} finally {
+				try { ps.close(); }
+				catch (Exception e1) {}
 			}
 		
 		}
@@ -812,20 +1004,21 @@ public class OracleDB {
 	
 	public boolean getOrderLines(Order order) {
 		
+		ResultSet rs = null;
 		boolean success = false;
 		
 		synchronized (connection) {
 			
 			try {
 				String sqlQuery = "SELECT * FROM orders_lines "
-						+ "WHERE order_num = ?"
+						+ "WHERE order_num = ? "
 						+ "ORDER BY line_num ASC";
 
-				PreparedStatement ps = connection.prepareStatement(sqlQuery);
+				ps = connection.prepareStatement(sqlQuery);
 				
 				ps.setInt(1, order.getNum());
 				
-				ResultSet rs = ps.executeQuery();
+				rs = ps.executeQuery();
 				
 				while (rs.next()) {
 					
@@ -844,6 +1037,9 @@ public class OracleDB {
 				
 			} catch (SQLException e) {
 				e.printStackTrace();
+			} finally {
+				try { rs.close(); ps.close(); }
+				catch (Exception e1) {}
 			}
 			
 		}
@@ -866,7 +1062,7 @@ public class OracleDB {
 							+ "line_discount, line_final_price) "
 							+ "VALUES (?,?,?,?,?,?,?)";
 	
-					PreparedStatement ps = connection.prepareStatement(sqlQuery);
+					ps = connection.prepareStatement(sqlQuery);
 	
 					ps.setInt(1, invoice.getNum());
 					ps.setInt(2, line.getNum());
@@ -882,6 +1078,9 @@ public class OracleDB {
 	
 				} catch (SQLException e) {
 					e.printStackTrace();
+				} finally {
+					try { ps.close(); }
+					catch (Exception e1) {}
 				}
 			}
 		}
@@ -900,7 +1099,7 @@ public class OracleDB {
 						+ "SET invoice_price = ? "
 						+ "WHERE invoice_num = ? ";
 
-				PreparedStatement ps = connection.prepareStatement(sqlQuery);
+				ps = connection.prepareStatement(sqlQuery);
 
 				ps.setFloat(1, invoice_price);
 				ps.setInt(2, invoice_num);
@@ -911,6 +1110,9 @@ public class OracleDB {
 
 			} catch (SQLException e) {
 				e.printStackTrace();
+			} finally {
+				try { ps.close(); }
+				catch (Exception e1) {}
 			}
 
 		}
@@ -929,7 +1131,7 @@ public class OracleDB {
 						+ "SET order_price = ? "
 						+ "WHERE order_num = ? ";
 
-				PreparedStatement ps = connection.prepareStatement(sqlQuery);
+				ps = connection.prepareStatement(sqlQuery);
 
 				ps.setFloat(1, order_price);
 				ps.setInt(2, order_num);
@@ -940,6 +1142,9 @@ public class OracleDB {
 
 			} catch (SQLException e) {
 				e.printStackTrace();
+			} finally {
+				try { ps.close(); }
+				catch (Exception e1) {}
 			}
 
 		}
@@ -958,7 +1163,7 @@ public class OracleDB {
 						+ "SET order_status = ? "
 						+ "WHERE order_num = ? ";
 
-				PreparedStatement ps = connection.prepareStatement(sqlQuery);
+				ps = connection.prepareStatement(sqlQuery);
 
 				ps.setString(1, "closed");
 				ps.setInt(2, order_num);
@@ -969,6 +1174,9 @@ public class OracleDB {
 
 			} catch (SQLException e) {
 				e.printStackTrace();
+			} finally {
+				try { ps.close(); }
+				catch (Exception e1) {}
 			}
 
 		}
@@ -987,7 +1195,7 @@ public class OracleDB {
 						+ "SET order_status = ? "
 						+ "WHERE order_num = ? ";
 
-				PreparedStatement ps = connection.prepareStatement(sqlQuery);
+				ps = connection.prepareStatement(sqlQuery);
 
 				ps.setString(1, "open");
 				ps.setInt(2, order_num);
@@ -998,6 +1206,9 @@ public class OracleDB {
 
 			} catch (SQLException e) {
 				e.printStackTrace();
+			} finally {
+				try { ps.close(); }
+				catch (Exception e1) {}
 			}
 
 		}
@@ -1008,6 +1219,10 @@ public class OracleDB {
 	public static java.sql.Date getCurrentDate() {
 	    java.util.Date today = new java.util.Date();
 	    return new java.sql.Date(today.getTime());
+	}
+	
+	public static java.sql.Date convertCalendarToSql(Calendar date) {
+		return new java.sql.Date(date.getTimeInMillis());
 	}
 	
 }

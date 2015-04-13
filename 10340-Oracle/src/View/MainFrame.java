@@ -2,13 +2,11 @@ package view;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
-
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -16,6 +14,7 @@ import java.awt.Toolkit;
 import database.OracleDB;
 import model.*;
 import view.panels.*;
+import view.reports.*;
 
 
 public class MainFrame extends JFrame {
@@ -73,7 +72,6 @@ public class MainFrame extends JFrame {
 		
 		setJMenuBar(new SysMenu(this));
 		setLocationRelativeTo(null);
-//		setAlwaysOnTop(true);
 		setVisible(true);
 	}
 	
@@ -139,6 +137,10 @@ public class MainFrame extends JFrame {
 	public void refundInvoice(Invoice inv) {
 		db.addNewInvoice(inv.getCustomer());
 		changePanel(new RefundInvoicePanel(this, inv));
+	}
+	
+	public void showStockReport() {
+		changePanel(new StockReport(this));
 	}
 	
 }

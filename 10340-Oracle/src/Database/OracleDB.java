@@ -360,6 +360,35 @@ public class OracleDB {
 		return list;
 	}
 
+	public ArrayList<Warehouse> getAllWarehouses() {
+		
+		ArrayList<Warehouse> list = new ArrayList<Warehouse>();
+		
+		synchronized (connection) {
+			try {
+				String sqlQuery = "SELECT * FROM warehouses";
+
+				PreparedStatement ps = connection.prepareStatement(sqlQuery);
+				
+				ResultSet rs = ps.executeQuery();
+				
+				while (rs.next()) {
+					
+					list.add(new Warehouse(	rs.getInt("wh_num"), 
+											rs.getString("wh_name"),
+											rs.getString("wh_street"),
+											rs.getString("wh_city"),
+											rs.getString("wh_phone") ));
+				}
+							
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return list;
+	}
+	
 	public ArrayList<Order> getAllOpenOrders() {
 		
 		ArrayList<Order> list = new ArrayList<Order>();
@@ -462,6 +491,103 @@ public class OracleDB {
 		return list;
 	}
 
+	public ArrayList<Stock> getStock() {
+		
+		ArrayList<Stock> list = new ArrayList<Stock>();
+		
+		synchronized (connection) {
+			try {
+				String sqlQuery = "SELECT * FROM stock";
+
+				PreparedStatement ps = connection.prepareStatement(sqlQuery);
+				
+				ResultSet rs = ps.executeQuery();
+				
+				while (rs.next()) {
+					
+					int item_num = rs.getInt("item_num");
+					Item item = getItemByNum(item_num);
+					
+					int wh_num = rs.getInt("wh_num");
+					Warehouse wh = getWarehouseByNum(wh_num);
+					
+					int quantity = rs.getInt("stock_quantity");
+					
+					list.add( new Stock(item, wh, quantity) );
+				}
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return list;
+	}
+
+	public ArrayList<Stock> getStock(Item item) {
+		
+		ArrayList<Stock> list = new ArrayList<Stock>();
+		
+		synchronized (connection) {
+			try {
+				String sqlQuery = "SELECT * FROM stock WHERE item_num = ?";
+
+				PreparedStatement ps = connection.prepareStatement(sqlQuery);
+				
+				ps.setInt(1, item.getNum());
+				
+				ResultSet rs = ps.executeQuery();
+				
+				while (rs.next()) {
+					
+					int wh_num = rs.getInt("wh_num");
+					Warehouse wh = getWarehouseByNum(wh_num);
+					
+					int quantity = rs.getInt("stock_quantity");
+					
+					list.add( new Stock(item, wh, quantity) );
+				}
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return list;
+	}
+	
+	public ArrayList<Stock> getStock(Warehouse wh) {
+		
+		ArrayList<Stock> list = new ArrayList<Stock>();
+		
+		synchronized (connection) {
+			try {
+				String sqlQuery = "SELECT * FROM stock WHERE wh_num = ?";
+
+				PreparedStatement ps = connection.prepareStatement(sqlQuery);
+				
+				ps.setInt(1, wh.getNum());
+				
+				ResultSet rs = ps.executeQuery();
+				
+				while (rs.next()) {
+					
+					int item_num = rs.getInt("item_num");
+					Item item = getItemByNum(item_num);
+					
+					int quantity = rs.getInt("stock_quantity");
+					
+					list.add( new Stock(item, wh, quantity) );
+				}
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return list;
+	}
+	
 	public int getCurrentOrderNum() {
 		
 		int max = -1;
@@ -885,3 +1011,4 @@ public class OracleDB {
 	}
 	
 }
+

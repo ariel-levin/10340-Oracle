@@ -149,7 +149,7 @@ public class SysMenu extends JMenuBar {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
-				
+				mainFrame.showStockReport();
 			}
 		});
 		reportMenu.add(itemBalanceItem);

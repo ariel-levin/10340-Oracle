@@ -66,6 +66,15 @@ public class Warehouse {
 
 	public void setPhone(String phone) {
 		this.phone = phone;
-	}	
+	}
+
+
+	@Override
+	public String toString() {
+		if (city == null)
+			return num + " : " + name;
+		else
+			return num + " : " + name + " : " + city;
+	}
 	
 }

@@ -100,11 +100,11 @@ public class UpdateOrderPanel extends SalePanel {
 			}
 		}
 		
-		order.setPrice(order_price);
+		order.setPrice(order_price * VAT);
 
 		boolean success1 = mainFrame.getDB().deleteOrderLines(order);
 		boolean success2 = mainFrame.getDB().addOrderLines(order);
-		boolean success3 = mainFrame.getDB().updateOrderPrice(order.getNum(), order_price);
+		boolean success3 = mainFrame.getDB().updateOrderPrice(order.getNum(), order.getPrice());
 		
 		if (success1 && success2 && success3) {
 			String msg = "The Order was updated successfully";

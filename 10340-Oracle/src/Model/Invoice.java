@@ -3,6 +3,8 @@ package model;
 import java.sql.Date;
 import java.util.ArrayList;
 
+import view.panels.SalePanel;
+
 
 /**
  * 
@@ -81,7 +83,7 @@ public class Invoice {
 	}
 
 	public void setPrice(float price) {
-		this.price = price;
+		this.price = SalePanel.round(price, 2);
 	}
 
 	public ArrayList<InvoiceLine> getLines() {

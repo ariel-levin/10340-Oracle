@@ -2,6 +2,8 @@ package model;
 
 import java.sql.Blob;
 
+import view.panels.SalePanel;
+
 
 /**
  * 
@@ -60,7 +62,7 @@ public class Item {
 	}
 
 	public void setPrice(float price) {
-		this.price = price;
+		this.price = SalePanel.round(price, 2);
 	}
 
 	public Blob getImg() {

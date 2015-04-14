@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -46,18 +47,21 @@ public class SalePanel extends JPanel {
 	public static final int DISCOUNT_COL 	= 3;
 	public static final int FPRICE_COL 		= 4;
 	
+	public static final float VAT			= 1.18f;
+	
 	
 	protected MainFrame 			mainFrame;
 	protected DefaultTableModel 	tableModel;
-	protected JLabel				lblNum, lblDate, lblCustomer;
+	protected JLabel				lblNum, lblDate, lblCustomer, lbltotalPrice, lblfinalPrice;
 	protected JButton				btnCommit, btnAdd, btnRem;
 	protected JPanel				northPanel, eastPanel, northBtnPanel;
 	protected JTable 				table;
-	
+	protected float					finalPrice;
 	
 	
 	public SalePanel(MainFrame mainFrame, String type) {
 		this.mainFrame = mainFrame;
+		this.finalPrice = 0.00f;
 		initPanel(type);
 	}
 	
@@ -78,6 +82,21 @@ public class SalePanel extends JPanel {
 		btnRem = new JButton("Remove Line");
 		btnRem.setAlignmentX(Component.CENTER_ALIGNMENT);
 		eastPanel.add(btnRem);
+		eastPanel.add(Box.createRigidArea(new Dimension(0,30)));
+		JLabel lblPriceTitle = new JLabel("Total Price:");
+		lblPriceTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+		eastPanel.add(lblPriceTitle);
+		lbltotalPrice = new JLabel(finalPrice + "");
+		lbltotalPrice.setAlignmentX(Component.CENTER_ALIGNMENT);
+		eastPanel.add(lbltotalPrice);
+		eastPanel.add(Box.createRigidArea(new Dimension(0,15)));
+		JLabel lblFinalTitle = new JLabel("Final Price:");
+		lblFinalTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+		eastPanel.add(lblFinalTitle);
+		lblfinalPrice = new JLabel(finalPrice + "");
+		lblfinalPrice.setAlignmentX(Component.CENTER_ALIGNMENT);
+		eastPanel.add(lblfinalPrice);
+		
 		eastPanel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
 
 		northPanel = new JPanel();
@@ -142,7 +161,7 @@ public class SalePanel extends JPanel {
 		String[] columnNames = { "Item", "Quantity", "Price", "Discount(%)", "Final Price" };
 
 		tableModel = new DefaultTableModel(columnNames, 1);
-		tableModel.addTableModelListener(new SalesTableModelListener(tableModel));
+		tableModel.addTableModelListener(new SalesTableModelListener(tableModel, this));
 		table.setModel(tableModel);
 
 		ArrayList<Item> items = mainFrame.getDB().getAllItems();
@@ -157,4 +176,16 @@ public class SalePanel extends JPanel {
 		table.getTableHeader().setReorderingAllowed(false);
 	}
 
+	public void updatePrice(float price) {
+		finalPrice = price;
+		lbltotalPrice.setText( String.format("%.2f", finalPrice) + "");
+		lblfinalPrice.setText( String.format("%.2f", round(finalPrice * VAT, 2) ) + "");
+	}
+	
+	public static float round(float d, int decimalPlace) {
+		BigDecimal bd = new BigDecimal(Float.toString(d));
+		bd = bd.setScale(decimalPlace, BigDecimal.ROUND_HALF_UP);
+		return bd.floatValue();
+	}
+	
 }

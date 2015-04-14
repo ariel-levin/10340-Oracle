@@ -1,5 +1,7 @@
 package model;
 
+import view.panels.SalePanel;
+
 
 /**
  * 
@@ -67,7 +69,7 @@ public class InvoiceLine {
 
 
 	public void setPrice(float price) {
-		this.price = price;
+		this.price = SalePanel.round(price, 2);
 	}
 
 
@@ -87,7 +89,7 @@ public class InvoiceLine {
 
 
 	public void setFinalPrice(float finalPrice) {
-		this.finalPrice = finalPrice;
+		this.finalPrice = SalePanel.round(finalPrice, 2);
 	}
 	
 }

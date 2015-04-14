@@ -60,7 +60,7 @@ public class ShowOrderPanel extends SalePanel {
 		
 		northPanel.remove(northBtnPanel);
 		EmptyBorder border = new EmptyBorder(5, 50, 5, 0);
-		JLabel lblPrice = new JLabel("Price: " + order.getPrice());
+		JLabel lblPrice = new JLabel("Price: " + String.format("%.2f", order.getPrice()) );
 		lblPrice.setBorder(border);
 		northPanel.add(lblPrice);
 		northPanel.add(northBtnPanel);

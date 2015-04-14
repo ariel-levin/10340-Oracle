@@ -118,10 +118,10 @@ public class RefundInvoicePanel extends SalePanel {
 			}
 		}
 		
-		invoice.setPrice(invoice_price);
+		invoice.setPrice(invoice_price * VAT);
 		
 		boolean success1 = mainFrame.getDB().addInvoiceLines(invoice);
-		boolean success2 = mainFrame.getDB().updateInvoicePrice(invoice.getNum(), invoice_price);
+		boolean success2 = mainFrame.getDB().updateInvoicePrice(invoice.getNum(), invoice.getPrice());
 
 		if (success1 && success2) {
 			String msg = "Source Invoice: " + refundInvoice.getNum() + " was refunded successfully\n"

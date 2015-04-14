@@ -1,6 +1,7 @@
 package view.panels;
 
 import java.util.ArrayList;
+
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.border.EmptyBorder;
@@ -58,7 +59,7 @@ public class ShowInvoicePanel extends SalePanel {
 		
 		northPanel.remove(northBtnPanel);
 		EmptyBorder border = new EmptyBorder(5, 50, 5, 0);
-		JLabel lblPrice = new JLabel("Price: " + invoice.getPrice());
+		JLabel lblPrice = new JLabel("Price: " + String.format("%.2f", invoice.getPrice()));
 		lblPrice.setBorder(border);
 		northPanel.add(lblPrice);
 		if (invoice.getOrder() != null) {

@@ -609,8 +609,13 @@ public class OracleDB {
 		
 		synchronized (connection) {
 			try {
-				String sqlQuery = "SELECT * FROM invoice "
-								+ "ORDER BY customer_num ASC, invoice_num ASC";
+				String sqlQuery = null;
+				if (withLines)
+					sqlQuery = "SELECT * FROM invoice "
+							 + "ORDER BY customer_num ASC, invoice_num ASC";
+				else
+					sqlQuery = "SELECT * FROM invoice "
+							 + "ORDER BY invoice_num ASC";
 
 				ps = connection.prepareStatement(sqlQuery);
 				
@@ -1098,53 +1103,6 @@ public class OracleDB {
 		
 		return list;
 	}
-	
-//	public ArrayList<ItemCustomerReportLine> getItemCustomerReport() {
-//		
-//		ResultSet rs = null;
-//		ArrayList<ItemCustomerReportLine> list = new ArrayList<ItemCustomerReportLine>();
-//		
-//		synchronized (connection) {
-//			try {
-//				String sqlQuery = "SELECT 	customer_num, invoice_date, invoice.invoice_num, "
-//								+ "			line_num, item_num, line_quantity, line_final_price "
-//								+ "FROM 	invoice "
-//								+ "				INNER JOIN "
-//								+ "			invoice_lines "
-//								+ "	ON invoice.invoice_num = invoice_lines.invoice_num "
-//								+ "ORDER BY customer_num ASC, invoice.invoice_num ASC, line_num ASC";
-//
-//				ps = connection.prepareStatement(sqlQuery);
-//				
-//				rs = ps.executeQuery();
-//				
-//				while (rs.next()) {
-//					
-//					int customer_num = rs.getInt("customer_num");
-//					Customer customer = getCustomerByNum(customer_num);
-//					
-//					java.sql.Date date = rs.getDate("invoice_date");
-//					
-//					int item_num = rs.getInt("item_num");
-//					Item item = getItemByNum(item_num);
-//					
-//					int quantity = rs.getInt("transaction_quantity");
-//					
-//					String type = rs.getString("transaction_type");
-//					
-//					list.add( new Transaction(trans_num, date, item, quantity, type, wh) );
-//				}
-//				
-//			} catch (SQLException e) {
-//				e.printStackTrace();
-//			} finally {
-//				try { rs.close(); ps.close(); }
-//				catch (Exception e1) {}
-//			}
-//		}
-//		
-//		return list;
-//	}
 	
 	public int getCurrentOrderNum() {
 		

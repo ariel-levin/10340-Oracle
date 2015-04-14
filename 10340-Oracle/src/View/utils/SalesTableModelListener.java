@@ -24,10 +24,12 @@ public class SalesTableModelListener implements TableModelListener {
 	private boolean 			enableListener = true;
 	private int 				rowCount;
 	private AbstractTableModel 	tableModel;
+	private SalePanel			salePanel;
 	
 	
-	public SalesTableModelListener(AbstractTableModel tableModel) {
+	public SalesTableModelListener(AbstractTableModel tableModel, SalePanel salePanel) {
 		this.tableModel = tableModel;
+		this.salePanel = salePanel;
 		this.rowCount = tableModel.getRowCount();
 	}
 	
@@ -40,6 +42,8 @@ public class SalesTableModelListener implements TableModelListener {
 		
 		if (tableModel.getRowCount() != rowCount) {		// means we added or removed row
 			rowCount = tableModel.getRowCount();
+			if (tableModel.getRowCount() < rowCount)
+				salePanel.updatePrice( sumAllPrices() );
 			return;
 		}
 		
@@ -149,11 +153,25 @@ public class SalesTableModelListener implements TableModelListener {
 		float price = (float)tableModel.getValueAt(row, SalePanel.PRICE_COL);
 		int discount = (int)tableModel.getValueAt(row, SalePanel.DISCOUNT_COL);
 		
-		return quantity * price * (1 - ((float)discount / 100));
+		float fprice = quantity * price * (1 - ((float)discount / 100));
+		
+		return SalePanel.round(fprice, 2);
 	}
 
 	public void updateFinalPrice(int row) {
 		tableModel.setValueAt( getFinalPrice(row) , row, SalePanel.FPRICE_COL);
+		salePanel.updatePrice( sumAllPrices() );
 	}
+	
+	private float sumAllPrices() {
+		float sum = 0;
+		for (int i = 0 ; i < tableModel.getRowCount(); i++) {
+			if (tableModel.getValueAt(i, SalePanel.FPRICE_COL) != null)
+				sum += (float) tableModel.getValueAt(i, SalePanel.FPRICE_COL);
+		}
+		return SalePanel.round(sum, 2);
+	}
+	
+	
 	
 }

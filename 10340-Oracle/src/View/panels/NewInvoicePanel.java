@@ -96,10 +96,10 @@ public class NewInvoicePanel extends SalePanel {
 			}
 		}
 		
-		invoice.setPrice(invoice_price);
+		invoice.setPrice(invoice_price * VAT);
 		
 		boolean success1 = mainFrame.getDB().addInvoiceLines(invoice);
-		boolean success2 = mainFrame.getDB().updateInvoicePrice(invoice.getNum(), invoice_price);
+		boolean success2 = mainFrame.getDB().updateInvoicePrice(invoice.getNum(), invoice.getPrice());
 		boolean success3 = true;
 		
 		if (invoice.getOrder() != null)

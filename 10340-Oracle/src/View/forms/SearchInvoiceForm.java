@@ -71,7 +71,7 @@ public class SearchInvoiceForm extends JFrame {
 	
 	private void initFrame() {
 		
-		ArrayList<Invoice> invoices = mainFrame.getDB().getAllInvoice();
+		ArrayList<Invoice> invoices = mainFrame.getDB().getAllInvoice(false);
 		JComboBox<Invoice> cb_invoice = new JComboBox<Invoice>();
 		for (Invoice inv : invoices)
 			cb_invoice.addItem(inv);

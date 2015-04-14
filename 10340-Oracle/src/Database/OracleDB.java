@@ -304,7 +304,7 @@ public class OracleDB {
 			
 			try {
 				String sqlQuery = "SELECT * FROM invoice_lines "
-						+ "WHERE invoice_num = ?"
+						+ "WHERE invoice_num = ? "
 						+ "ORDER BY line_num ASC";
 
 				ps = connection.prepareStatement(sqlQuery);
@@ -602,14 +602,173 @@ public class OracleDB {
 		return list;
 	}
 
-	public ArrayList<Invoice> getAllInvoice() {
+	public ArrayList<Invoice> getAllInvoice(boolean withLines) {
 		
-		ResultSet rs = null;
+		ResultSet rs1 = null;
 		ArrayList<Invoice> list = new ArrayList<Invoice>();
 		
 		synchronized (connection) {
 			try {
-				String sqlQuery = "SELECT * FROM invoice";
+				String sqlQuery = "SELECT * FROM invoice "
+								+ "ORDER BY customer_num ASC, invoice_num ASC";
+
+				ps = connection.prepareStatement(sqlQuery);
+				
+				rs1 = ps.executeQuery();
+				
+				while (rs1.next()) {
+					
+					int invoice_num = rs1.getInt("invoice_num");
+					
+					java.sql.Date date = rs1.getDate("invoice_date");
+					
+					int customer_num = rs1.getInt("customer_num");
+					Customer customer = getCustomerByNum(customer_num);
+					
+					float inv_price = rs1.getFloat("invoice_price");
+					
+					Invoice invoice = new Invoice(invoice_num, null, date, customer, inv_price);
+					
+					if (withLines) {
+						
+						ResultSet rs2 = null;
+						
+						try {
+							sqlQuery = "SELECT * FROM invoice_lines "
+									+ "WHERE invoice_num = ? "
+									+ "ORDER BY line_num ASC";
+	
+							ps = connection.prepareStatement(sqlQuery);
+							
+							ps.setInt(1, invoice_num);
+							
+							rs2 = ps.executeQuery();
+							
+							while (rs2.next()) {
+								
+								int num = rs2.getInt("line_num");
+								
+								int item_num = rs2.getInt("item_num");
+								Item item = getItemByNum(item_num);
+								
+								int quantity = rs2.getInt("line_quantity");
+								float line_price = rs2.getFloat("line_price");
+								int discount = rs2.getInt("line_discount");
+								float finalPrice = rs2.getFloat("line_final_price");
+								
+								invoice.addLine( new InvoiceLine(num, item, quantity, line_price, discount, finalPrice) );
+							}
+							
+						} catch (SQLException e) {
+							e.printStackTrace();
+						} finally {
+							try { rs2.close(); ps.close(); }
+							catch (Exception e1) {}
+						}
+					}
+					
+					list.add(invoice);
+				}
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				try { rs1.close(); ps.close(); }
+				catch (Exception e1) {}
+			}
+		}
+		
+		return list;
+	}
+	
+	public ArrayList<Invoice> getAllInvoice(boolean withLines, Customer customer) {
+		
+		ResultSet rs1 = null;
+		ArrayList<Invoice> list = new ArrayList<Invoice>();
+		
+		synchronized (connection) {
+			try {
+				String sqlQuery = "SELECT * FROM invoice "
+								+ "WHERE customer_num = ? "
+								+ "ORDER BY customer_num ASC, invoice_num ASC";
+
+				ps = connection.prepareStatement(sqlQuery);
+				
+				ps.setInt(1, customer.getNum());
+				
+				rs1 = ps.executeQuery();
+				
+				while (rs1.next()) {
+					
+					int invoice_num = rs1.getInt("invoice_num");
+					
+					java.sql.Date date = rs1.getDate("invoice_date");
+					
+					float inv_price = rs1.getFloat("invoice_price");
+					
+					Invoice invoice = new Invoice(invoice_num, null, date, customer, inv_price);
+					
+					if (withLines) {
+						
+						ResultSet rs2 = null;
+						
+						try {
+							sqlQuery = "SELECT * FROM invoice_lines "
+									+ "WHERE invoice_num = ?"
+									+ "ORDER BY line_num ASC";
+	
+							ps = connection.prepareStatement(sqlQuery);
+							
+							ps.setInt(1, invoice_num);
+							
+							rs2 = ps.executeQuery();
+							
+							while (rs2.next()) {
+								
+								int num = rs2.getInt("line_num");
+								
+								int item_num = rs2.getInt("item_num");
+								Item item = getItemByNum(item_num);
+								
+								int quantity = rs2.getInt("line_quantity");
+								float line_price = rs2.getFloat("line_price");
+								int discount = rs2.getInt("line_discount");
+								float finalPrice = rs2.getFloat("line_final_price");
+								
+								invoice.addLine( new InvoiceLine(num, item, quantity, line_price, discount, finalPrice) );
+							}
+							
+						} catch (SQLException e) {
+							e.printStackTrace();
+						} finally {
+							try { rs2.close(); ps.close(); }
+							catch (Exception e1) {}
+						}
+					}
+					
+					list.add(invoice);
+				}
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				try { rs1.close(); ps.close(); }
+				catch (Exception e1) {}
+			}
+		}
+		
+		return list;
+	}
+
+	public ArrayList<Transaction> getAllTransactions() {
+		
+		ResultSet rs = null;
+		ArrayList<Transaction> list = new ArrayList<Transaction>();
+		
+		synchronized (connection) {
+			try {
+				String sqlQuery = "SELECT * FROM transactions "
+								+ "ORDER BY transaction_num ASC";
 
 				ps = connection.prepareStatement(sqlQuery);
 				
@@ -617,16 +776,21 @@ public class OracleDB {
 				
 				while (rs.next()) {
 					
-					int invoice_num = rs.getInt("invoice_num");
+					int trans_num = rs.getInt("transaction_num");
 					
-					java.sql.Date date = rs.getDate("invoice_date");
+					java.sql.Date date = rs.getDate("transaction_date");
 					
-					int customer_num = rs.getInt("customer_num");
-					Customer customer = getCustomerByNum(customer_num);
+					int item_num = rs.getInt("item_num");
+					Item item = getItemByNum(item_num);
 					
-					float price = rs.getFloat("invoice_price");
+					int quantity = rs.getInt("transaction_quantity");
 					
-					list.add( new Invoice(invoice_num, null, date, customer, price) );
+					String type = rs.getString("transaction_type");
+					
+					int wh_num = rs.getInt("wh_num");
+					Warehouse wh = getWarehouseByNum(wh_num);
+					
+					list.add( new Transaction(trans_num, date, item, quantity, type, wh) );
 				}
 				
 			} catch (SQLException e) {
@@ -639,7 +803,188 @@ public class OracleDB {
 		
 		return list;
 	}
+	
+	public ArrayList<Transaction> getAllTransactions(Calendar startDate, Calendar endDate) {
+		
+		ResultSet rs = null;
+		ArrayList<Transaction> list = new ArrayList<Transaction>();
+		
+		synchronized (connection) {
+			try {
+				String sqlQuery = "SELECT * FROM transactions "
+								+ "WHERE transaction_date BETWEEN ? AND ? "
+								+ "ORDER BY transaction_num ASC";
 
+				ps = connection.prepareStatement(sqlQuery);
+				
+				ps.setDate(1, convertCalendarToSql(startDate));
+				ps.setDate(2, convertCalendarToSql(endDate));
+				
+				rs = ps.executeQuery();
+				
+				while (rs.next()) {
+					
+					int trans_num = rs.getInt("transaction_num");
+					
+					java.sql.Date date = rs.getDate("transaction_date");
+					
+					int item_num = rs.getInt("item_num");
+					Item item = getItemByNum(item_num);
+					
+					int quantity = rs.getInt("transaction_quantity");
+					
+					String type = rs.getString("transaction_type");
+					
+					int wh_num = rs.getInt("wh_num");
+					Warehouse wh = getWarehouseByNum(wh_num);
+					
+					list.add( new Transaction(trans_num, date, item, quantity, type, wh) );
+				}
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				try { rs.close(); ps.close(); }
+				catch (Exception e1) {}
+			}
+		}
+		
+		return list;
+	}
+	
+	public ArrayList<Transaction> getAllTransactions(Item item) {
+		
+		ResultSet rs = null;
+		ArrayList<Transaction> list = new ArrayList<Transaction>();
+		
+		synchronized (connection) {
+			try {
+				String sqlQuery = "SELECT * FROM transactions "
+								+ "WHERE item_num = ? "
+								+ "ORDER BY transaction_num ASC";
+
+				ps = connection.prepareStatement(sqlQuery);
+				
+				ps.setInt(1, item.getNum());
+				
+				rs = ps.executeQuery();
+				
+				while (rs.next()) {
+					
+					int trans_num = rs.getInt("transaction_num");
+					
+					java.sql.Date date = rs.getDate("transaction_date");
+					
+					int quantity = rs.getInt("transaction_quantity");
+					
+					String type = rs.getString("transaction_type");
+					
+					int wh_num = rs.getInt("wh_num");
+					Warehouse wh = getWarehouseByNum(wh_num);
+					
+					list.add( new Transaction(trans_num, date, item, quantity, type, wh) );
+				}
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				try { rs.close(); ps.close(); }
+				catch (Exception e1) {}
+			}
+		}
+		
+		return list;
+	}
+	
+	public ArrayList<Transaction> getAllTransactions(String type) {
+		
+		ResultSet rs = null;
+		ArrayList<Transaction> list = new ArrayList<Transaction>();
+		
+		synchronized (connection) {
+			try {
+				String sqlQuery = "SELECT * FROM transactions "
+								+ "WHERE transaction_type LIKE ? "
+								+ "ORDER BY transaction_num ASC";
+
+				ps = connection.prepareStatement(sqlQuery);
+				
+				ps.setString(1, type);
+				
+				rs = ps.executeQuery();
+				
+				while (rs.next()) {
+					
+					int trans_num = rs.getInt("transaction_num");
+					
+					java.sql.Date date = rs.getDate("transaction_date");
+					
+					int item_num = rs.getInt("item_num");
+					Item item = getItemByNum(item_num);
+					
+					int quantity = rs.getInt("transaction_quantity");
+					
+					int wh_num = rs.getInt("wh_num");
+					Warehouse wh = getWarehouseByNum(wh_num);
+					
+					list.add( new Transaction(trans_num, date, item, quantity, type, wh) );
+				}
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				try { rs.close(); ps.close(); }
+				catch (Exception e1) {}
+			}
+		}
+		
+		return list;
+	}
+	
+	public ArrayList<Transaction> getAllTransactions(Warehouse wh) {
+		
+		ResultSet rs = null;
+		ArrayList<Transaction> list = new ArrayList<Transaction>();
+		
+		synchronized (connection) {
+			try {
+				String sqlQuery = "SELECT * FROM transactions "
+								+ "WHERE wh_num = ? "
+								+ "ORDER BY transaction_num ASC";
+
+				ps = connection.prepareStatement(sqlQuery);
+				
+				ps.setInt(1, wh.getNum());
+				
+				rs = ps.executeQuery();
+				
+				while (rs.next()) {
+					
+					int trans_num = rs.getInt("transaction_num");
+					
+					java.sql.Date date = rs.getDate("transaction_date");
+					
+					int item_num = rs.getInt("item_num");
+					Item item = getItemByNum(item_num);
+					
+					int quantity = rs.getInt("transaction_quantity");
+					
+					String type = rs.getString("transaction_type");
+					
+					list.add( new Transaction(trans_num, date, item, quantity, type, wh) );
+				}
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				try { rs.close(); ps.close(); }
+				catch (Exception e1) {}
+			}
+		}
+		
+		return list;
+	}
+	
 	public ArrayList<Stock> getStock() {
 		
 		ResultSet rs = null;
@@ -753,6 +1098,53 @@ public class OracleDB {
 		
 		return list;
 	}
+	
+//	public ArrayList<ItemCustomerReportLine> getItemCustomerReport() {
+//		
+//		ResultSet rs = null;
+//		ArrayList<ItemCustomerReportLine> list = new ArrayList<ItemCustomerReportLine>();
+//		
+//		synchronized (connection) {
+//			try {
+//				String sqlQuery = "SELECT 	customer_num, invoice_date, invoice.invoice_num, "
+//								+ "			line_num, item_num, line_quantity, line_final_price "
+//								+ "FROM 	invoice "
+//								+ "				INNER JOIN "
+//								+ "			invoice_lines "
+//								+ "	ON invoice.invoice_num = invoice_lines.invoice_num "
+//								+ "ORDER BY customer_num ASC, invoice.invoice_num ASC, line_num ASC";
+//
+//				ps = connection.prepareStatement(sqlQuery);
+//				
+//				rs = ps.executeQuery();
+//				
+//				while (rs.next()) {
+//					
+//					int customer_num = rs.getInt("customer_num");
+//					Customer customer = getCustomerByNum(customer_num);
+//					
+//					java.sql.Date date = rs.getDate("invoice_date");
+//					
+//					int item_num = rs.getInt("item_num");
+//					Item item = getItemByNum(item_num);
+//					
+//					int quantity = rs.getInt("transaction_quantity");
+//					
+//					String type = rs.getString("transaction_type");
+//					
+//					list.add( new Transaction(trans_num, date, item, quantity, type, wh) );
+//				}
+//				
+//			} catch (SQLException e) {
+//				e.printStackTrace();
+//			} finally {
+//				try { rs.close(); ps.close(); }
+//				catch (Exception e1) {}
+//			}
+//		}
+//		
+//		return list;
+//	}
 	
 	public int getCurrentOrderNum() {
 		

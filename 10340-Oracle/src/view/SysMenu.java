@@ -179,17 +179,17 @@ public class SysMenu extends JMenuBar {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
-				
+				mainFrame.showTransaction();
 			}
 		});
 		reportMenu.add(transactionItem);
 		
-		JMenuItem salesItem = new JMenuItem("Item Sales");
+		JMenuItem salesItem = new JMenuItem("Items Sales Per Customer");
 		salesItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
-				
+				mainFrame.showItemCustomerReport();
 			}
 		});
 		reportMenu.add(salesItem);

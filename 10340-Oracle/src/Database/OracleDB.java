@@ -8,8 +8,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
+
 import javax.swing.JOptionPane;
 
+import view.utils.DBErrors;
 import model.*;
 
 
@@ -571,7 +573,8 @@ public class OracleDB {
 		
 		synchronized (connection) {
 			try {
-				String sqlQuery = "SELECT * FROM orders";
+				String sqlQuery = "SELECT * FROM orders "
+								+ "ORDER BY order_num ASC";
 
 				ps = connection.prepareStatement(sqlQuery);
 				
@@ -1283,7 +1286,15 @@ public class OracleDB {
 					success = true;
 	
 				} catch (SQLException e) {
-					e.printStackTrace();
+					DBErrors.showError(e, line.getItem());
+					if (e.getErrorCode() == DBErrors.STOCK_QUANTITY) {
+						try { ps.close(); }
+						catch (Exception e1) {}
+						
+						deleteOrderLines(order);	// delete all lines that were added
+						return false;
+					}
+					
 				} finally {
 					try { ps.close(); }
 					catch (Exception e1) {}

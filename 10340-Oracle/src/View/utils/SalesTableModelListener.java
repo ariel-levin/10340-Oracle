@@ -49,10 +49,18 @@ public class SalesTableModelListener implements TableModelListener {
 		
 		int row = e.getFirstRow();
 		int col = e.getColumn();
-		Item item = (Item)tableModel.getValueAt(row, SalePanel.ITEM_COL);
+		Item item = null;
+		try {
+			item = (Item)tableModel.getValueAt(row, SalePanel.ITEM_COL);
+		} catch (Exception e1) {}
 		
 		if (item == null) {		// false selection
 			selectItemError(row, col);
+			return;
+		}
+		
+		if ( isItemAlreadyExist(item, row) ) {
+			itemAlreadyExistError(row, col);
 			return;
 		}
 		
@@ -101,6 +109,15 @@ public class SalesTableModelListener implements TableModelListener {
 		JOptionPane.showMessageDialog(null,msg,"Error",JOptionPane.ERROR_MESSAGE);
 		enableListener = false;
 		tableModel.setValueAt("", row, col);
+		enableListener = true;
+	}
+	
+	public void itemAlreadyExistError(int row, int col) {
+		String msg = "ERROR: Item already exist on table\n"
+				+ "Please select another item, or add to the existing one";
+		JOptionPane.showMessageDialog(null,msg,"Error",JOptionPane.ERROR_MESSAGE);
+		enableListener = false;
+		tableModel.setValueAt(null, row, col);
 		enableListener = true;
 	}
 	
@@ -172,6 +189,18 @@ public class SalesTableModelListener implements TableModelListener {
 		return SalePanel.round(sum, 2);
 	}
 	
-	
+	private boolean isItemAlreadyExist(Item item, int row) {
+		
+		for (int i = 0 ; i < tableModel.getRowCount() ; i++) {
+			Item tmpItem = null;
+			try {
+				tmpItem = (Item)tableModel.getValueAt(i, SalePanel.ITEM_COL);
+			} catch (Exception e) {}
+			
+			if ( tmpItem != null && i != row && tmpItem.getNum() == item.getNum() )
+				return true;
+		}
+		return false;
+	}
 	
 }

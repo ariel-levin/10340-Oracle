@@ -7,6 +7,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JOptionPane;
 
 import view.MainFrame;
+import view.utils.DBErrors;
 import model.*;
 
 
@@ -79,6 +80,7 @@ public class NewInvoicePanel extends SalePanel {
 
 		float invoice_price = 0;
 		int line_num = 1;
+		invoice.removeLines();
 
 		for (int i = 0; i < tableModel.getRowCount(); i++) {
 
@@ -99,21 +101,27 @@ public class NewInvoicePanel extends SalePanel {
 		invoice.setPrice(invoice_price * VAT);
 		
 		boolean success1 = mainFrame.getDB().addInvoiceLines(invoice);
-		boolean success2 = mainFrame.getDB().updateInvoicePrice(invoice.getNum(), invoice.getPrice());
-		boolean success3 = true;
-		
-		if (invoice.getOrder() != null)
-			success3 = mainFrame.getDB().closeOrder(invoice.getOrder().getNum());
 
-		if (success1 && success2 && success3) {
-			String msg = "The Invoice was commited successfully";
-			JOptionPane.showMessageDialog(null, msg, "Success",JOptionPane.INFORMATION_MESSAGE);
-		} else {
-			String msg = "Some error occurred...";
-			JOptionPane.showMessageDialog(null, msg, "Error",JOptionPane.ERROR_MESSAGE);
+		if (success1) {
+			boolean success2 = mainFrame.getDB().updateInvoicePrice(invoice.getNum(), invoice.getPrice());
+			
+			if (success2) {
+				boolean success3 = true;
+				if (invoice.getOrder() != null)
+					success3 = mainFrame.getDB().closeOrder(invoice.getOrder().getNum());
+				
+				if (success3) {
+					String msg = "The Invoice was commited successfully";
+					JOptionPane.showMessageDialog(null, msg, "Success",JOptionPane.INFORMATION_MESSAGE);
+					mainFrame.removePanel();
+				} else
+					DBErrors.showError();				
+				
+			} else 
+				DBErrors.showError();
+
 		}
 
-		mainFrame.removePanel();
 	}
 
 }

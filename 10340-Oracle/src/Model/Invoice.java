@@ -106,6 +106,10 @@ public class Invoice {
 		return lines.size();
 	}
 	
+	public void removeLines() {
+		this.lines = new ArrayList<InvoiceLine>();
+	}
+	
 	
 	public String toString() {
 		return num + " | " + customer + " | " + date + " | " + price + "¤";

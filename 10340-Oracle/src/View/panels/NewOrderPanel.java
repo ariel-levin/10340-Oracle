@@ -7,6 +7,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JOptionPane;
 
 import view.MainFrame;
+import view.utils.DBErrors;
 import model.*;
 
 
@@ -65,6 +66,7 @@ public class NewOrderPanel extends SalePanel {
 
 		float order_price = 0;
 		int line_num = 1;
+		order.removeLines();
 		
 		for (int i = 0; i < tableModel.getRowCount(); i++) {
 
@@ -85,17 +87,18 @@ public class NewOrderPanel extends SalePanel {
 		order.setPrice(order_price * VAT);
 
 		boolean success1 = mainFrame.getDB().addOrderLines(order);
-		boolean success2 = mainFrame.getDB().updateOrderPrice(order.getNum(), order.getPrice());
 		
-		if (success1 && success2) {
-			String msg = "The Order was commited successfully";
-			JOptionPane.showMessageDialog(null, msg, "Success",JOptionPane.INFORMATION_MESSAGE);
-		} else {
-			String msg = "Some error occurred...";
-			JOptionPane.showMessageDialog(null, msg, "Error",JOptionPane.ERROR_MESSAGE);
+		if (success1) {
+			
+			boolean success2 = mainFrame.getDB().updateOrderPrice(order.getNum(), order.getPrice());
+			
+			if (success2) {
+				String msg = "The Order was commited successfully";
+				JOptionPane.showMessageDialog(null, msg, "Success",JOptionPane.INFORMATION_MESSAGE);
+				mainFrame.removePanel();
+			} else
+				DBErrors.showError();
 		}
-
-		mainFrame.removePanel();
 	}
 
 }

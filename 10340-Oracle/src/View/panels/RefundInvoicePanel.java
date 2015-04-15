@@ -121,6 +121,13 @@ public class RefundInvoicePanel extends SalePanel {
 			}
 		}
 		
+		Item itemNotEnoughInStock = mainFrame.getDB().checkInvoiceLinesInStock(invoice);
+		if (itemNotEnoughInStock != null) {
+			String msg = "ERROR: Item " + itemNotEnoughInStock + " >> Not enough in stock..";
+			JOptionPane.showMessageDialog(null, msg, "Stock Error",JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
 		invoice.setPrice(invoice_price * VAT);
 		
 		boolean success1 = mainFrame.getDB().addInvoiceLines(invoice);

@@ -10,20 +10,7 @@ CREATE table "CUSTOMERS" (
 )
 /
 
-CREATE sequence "CUSTOMERS_SEQ" 
-/
-
-CREATE trigger "BI_CUSTOMERS"  
-  before insert on "CUSTOMERS"              
-  for each row 
-begin  
-  if :NEW."CUSTOMER_NUM" is null then
-    select "CUSTOMERS_SEQ".nextval into :NEW."CUSTOMER_NUM" from dual;
-  end if;
-end;
-/   
-
 alter table "CUSTOMERS" add
 constraint "CUSTOMERS_UK_ID" 
 unique ("CUSTOMER_ID")
-/   
+/

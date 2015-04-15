@@ -1,0 +1,1 @@
+CREATE sequence "WAREHOUSES_SEQ"

@@ -8,7 +8,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
-
 import javax.swing.JOptionPane;
 
 import view.utils.DBErrors;
@@ -67,7 +66,7 @@ public class OracleDB {
 				success = true;
 
 			} catch (SQLException e) {
-				e.printStackTrace();
+				DBErrors.showError(e);
 			}
 		}
 		
@@ -103,7 +102,7 @@ public class OracleDB {
 				c = new Customer(customer_num, fname, lname, id, street, city, phone);
 				
 			} catch (SQLException e) {
-				e.printStackTrace();
+				DBErrors.showError(e);
 			} finally {
 				try { rs.close(); ps.close(); }
 				catch (Exception e1) {}
@@ -139,7 +138,7 @@ public class OracleDB {
 				wh = new Warehouse(wh_num, name, street, city, phone);
 				
 			} catch (SQLException e) {
-				e.printStackTrace();
+				DBErrors.showError(e);
 			} finally {
 				try { rs.close(); ps.close(); }
 				catch (Exception e1) {}
@@ -175,7 +174,7 @@ public class OracleDB {
 				item = new Item(item_num, name, desc, price, img);
 				
 			} catch (SQLException e) {
-				e.printStackTrace();
+				DBErrors.showError(e);
 			} finally {
 				try { rs.close(); ps.close(); }
 				catch (Exception e1) {}
@@ -214,7 +213,7 @@ public class OracleDB {
 				order = new Order(order_num, date, customer, price, status);
 				
 			} catch (SQLException e) {
-				e.printStackTrace();
+				DBErrors.showError(e);
 			} finally {
 				try { rs.close(); ps.close(); }
 				catch (Exception e1) {}
@@ -248,7 +247,7 @@ public class OracleDB {
 				}
 				
 			} catch (SQLException e) {
-				e.printStackTrace();
+				DBErrors.showError(e);
 			} finally {
 				try { rs.close(); ps.close(); }
 				catch (Exception e1) {}
@@ -298,7 +297,7 @@ public class OracleDB {
 				inv = new Invoice(invoice_num, order, date, customer, price);
 				
 			} catch (SQLException e) {
-				e.printStackTrace();
+				DBErrors.showError(e);
 			} finally {
 				try { rs.close(); ps.close(); }
 				catch (Exception e1) {}
@@ -332,7 +331,7 @@ public class OracleDB {
 				}
 				
 			} catch (SQLException e) {
-				e.printStackTrace();
+				DBErrors.showError(e);
 			} finally {
 				try { rs.close(); ps.close(); }
 				catch (Exception e1) {}
@@ -366,7 +365,7 @@ public class OracleDB {
 				}
 							
 			} catch (SQLException e) {
-				e.printStackTrace();
+				DBErrors.showError(e);
 			} finally {
 				try { rs.close(); ps.close(); }
 				catch (Exception e1) {}
@@ -399,7 +398,7 @@ public class OracleDB {
 				}
 							
 			} catch (SQLException e) {
-				e.printStackTrace();
+				DBErrors.showError(e);
 			} finally {
 				try { rs.close(); ps.close(); }
 				catch (Exception e1) {}
@@ -432,7 +431,7 @@ public class OracleDB {
 				}
 							
 			} catch (SQLException e) {
-				e.printStackTrace();
+				DBErrors.showError(e);
 			} finally {
 				try { rs.close(); ps.close(); }
 				catch (Exception e1) {}
@@ -472,7 +471,7 @@ public class OracleDB {
 				}
 				
 			} catch (SQLException e) {
-				e.printStackTrace();
+				DBErrors.showError(e);
 			} finally {
 				try { rs.close(); ps.close(); }
 				catch (Exception e1) {}
@@ -512,7 +511,7 @@ public class OracleDB {
 				}
 				
 			} catch (SQLException e) {
-				e.printStackTrace();
+				DBErrors.showError(e);
 			} finally {
 				try { rs.close(); ps.close(); }
 				catch (Exception e1) {}
@@ -556,7 +555,7 @@ public class OracleDB {
 				}
 				
 			} catch (SQLException e) {
-				e.printStackTrace();
+				DBErrors.showError(e);
 			} finally {
 				try { rs.close(); ps.close(); }
 				catch (Exception e1) {}
@@ -595,7 +594,7 @@ public class OracleDB {
 				}
 				
 			} catch (SQLException e) {
-				e.printStackTrace();
+				DBErrors.showError(e);
 			} finally {
 				try { rs.close(); ps.close(); }
 				catch (Exception e1) {}
@@ -668,7 +667,7 @@ public class OracleDB {
 							}
 							
 						} catch (SQLException e) {
-							e.printStackTrace();
+							DBErrors.showError(e);
 						} finally {
 							try { rs2.close(); ps.close(); }
 							catch (Exception e1) {}
@@ -679,7 +678,7 @@ public class OracleDB {
 				}
 				
 			} catch (SQLException e) {
-				e.printStackTrace();
+				DBErrors.showError(e);
 			} finally {
 				try { rs1.close(); ps.close(); }
 				catch (Exception e1) {}
@@ -747,7 +746,7 @@ public class OracleDB {
 							}
 							
 						} catch (SQLException e) {
-							e.printStackTrace();
+							DBErrors.showError(e);
 						} finally {
 							try { rs2.close(); ps.close(); }
 							catch (Exception e1) {}
@@ -758,7 +757,7 @@ public class OracleDB {
 				}
 				
 			} catch (SQLException e) {
-				e.printStackTrace();
+				DBErrors.showError(e);
 			} finally {
 				try { rs1.close(); ps.close(); }
 				catch (Exception e1) {}
@@ -802,7 +801,7 @@ public class OracleDB {
 				}
 				
 			} catch (SQLException e) {
-				e.printStackTrace();
+				DBErrors.showError(e);
 			} finally {
 				try { rs.close(); ps.close(); }
 				catch (Exception e1) {}
@@ -850,7 +849,7 @@ public class OracleDB {
 				}
 				
 			} catch (SQLException e) {
-				e.printStackTrace();
+				DBErrors.showError(e);
 			} finally {
 				try { rs.close(); ps.close(); }
 				catch (Exception e1) {}
@@ -894,7 +893,7 @@ public class OracleDB {
 				}
 				
 			} catch (SQLException e) {
-				e.printStackTrace();
+				DBErrors.showError(e);
 			} finally {
 				try { rs.close(); ps.close(); }
 				catch (Exception e1) {}
@@ -939,7 +938,7 @@ public class OracleDB {
 				}
 				
 			} catch (SQLException e) {
-				e.printStackTrace();
+				DBErrors.showError(e);
 			} finally {
 				try { rs.close(); ps.close(); }
 				catch (Exception e1) {}
@@ -983,7 +982,7 @@ public class OracleDB {
 				}
 				
 			} catch (SQLException e) {
-				e.printStackTrace();
+				DBErrors.showError(e);
 			} finally {
 				try { rs.close(); ps.close(); }
 				catch (Exception e1) {}
@@ -1021,7 +1020,7 @@ public class OracleDB {
 				}
 				
 			} catch (SQLException e) {
-				e.printStackTrace();
+				DBErrors.showError(e);
 			} finally {
 				try { rs.close(); ps.close(); }
 				catch (Exception e1) {}
@@ -1059,7 +1058,7 @@ public class OracleDB {
 				}
 				
 			} catch (SQLException e) {
-				e.printStackTrace();
+				DBErrors.showError(e);
 			} finally {
 				try { rs.close(); ps.close(); }
 				catch (Exception e1) {}
@@ -1097,7 +1096,7 @@ public class OracleDB {
 				}
 				
 			} catch (SQLException e) {
-				e.printStackTrace();
+				DBErrors.showError(e);
 			} finally {
 				try { rs.close(); ps.close(); }
 				catch (Exception e1) {}
@@ -1105,6 +1104,80 @@ public class OracleDB {
 		}
 		
 		return list;
+	}
+	
+	public Item checkOrderLinesInStock(Order order) {
+		
+		ResultSet rs = null;
+
+		synchronized (connection) {
+			
+			ArrayList<OrderLine> list = order.getLines();
+			
+			for (OrderLine line : list) {
+				try {
+					String sqlQuery = "SELECT ARIEL.check_item_stock(?,?) "
+									+ "FROM dual";
+
+					ps = connection.prepareStatement(sqlQuery);
+					
+					ps.setInt(1, line.getItem().getNum());
+					ps.setInt(2, line.getQuantity());
+					
+					rs = ps.executeQuery();
+					
+					rs.next();
+
+					if (rs.getInt(1) == 0)
+						return line.getItem();
+	
+				} catch (SQLException e) {
+					DBErrors.showError(e);
+				} finally {
+					try { rs.close(); ps.close(); }
+					catch (Exception e1) {}
+				}
+			}
+		}
+		
+		return null;
+	}
+	
+	public Item checkInvoiceLinesInStock(Invoice invoice) {
+		
+		ResultSet rs = null;
+
+		synchronized (connection) {
+			
+			ArrayList<InvoiceLine> list = invoice.getLines();
+			
+			for (InvoiceLine line : list) {
+				try {
+					String sqlQuery = "SELECT ARIEL.check_item_stock(?,?) "
+									+ "FROM dual";
+
+					ps = connection.prepareStatement(sqlQuery);
+					
+					ps.setInt(1, line.getItem().getNum());
+					ps.setInt(2, line.getQuantity());
+					
+					rs = ps.executeQuery();
+					
+					rs.next();
+
+					if (rs.getInt(1) == 0)
+						return line.getItem();
+	
+				} catch (SQLException e) {
+					DBErrors.showError(e);
+				} finally {
+					try { rs.close(); ps.close(); }
+					catch (Exception e1) {}
+				}
+			}
+		}
+		
+		return null;
 	}
 	
 	public int getCurrentOrderNum() {
@@ -1124,7 +1197,7 @@ public class OracleDB {
 				max = rs.getInt(1);
 							
 			} catch (SQLException e) {
-				e.printStackTrace();
+				DBErrors.showError(e);
 			} finally {
 				try { rs.close(); ps.close(); }
 				catch (Exception e1) {}
@@ -1151,7 +1224,7 @@ public class OracleDB {
 				max = rs.getInt(1);
 							
 			} catch (SQLException e) {
-				e.printStackTrace();
+				DBErrors.showError(e);
 			} finally {
 				try { rs.close(); ps.close(); }
 				catch (Exception e1) {}
@@ -1183,7 +1256,7 @@ public class OracleDB {
 				success = true;
 
 			} catch (SQLException e) {
-				e.printStackTrace();
+				DBErrors.showError(e);
 			} finally {
 				try { ps.close(); }
 				catch (Exception e1) {}
@@ -1214,7 +1287,7 @@ public class OracleDB {
 				success = true;
 
 			} catch (SQLException e) {
-				e.printStackTrace();
+				DBErrors.showError(e);
 			} finally {
 				try { ps.close(); }
 				catch (Exception e1) {}
@@ -1246,7 +1319,7 @@ public class OracleDB {
 				success = true;
 
 			} catch (SQLException e) {
-				e.printStackTrace();
+				DBErrors.showError(e);
 			} finally {
 				try { ps.close(); }
 				catch (Exception e1) {}
@@ -1323,7 +1396,36 @@ public class OracleDB {
 				success = true;
 
 			} catch (SQLException e) {
-				e.printStackTrace();
+				DBErrors.showError(e);
+			} finally {
+				try { ps.close(); }
+				catch (Exception e1) {}
+			}
+		
+		}
+		
+		return success;
+	}
+	
+	public boolean deleteInvoiceLines(Invoice invoice) {
+		
+		boolean success = false;
+		
+		synchronized (connection) {
+			
+			try {
+				String sqlQuery = "DELETE FROM invoice_lines WHERE invoice_num = ?";
+
+				ps = connection.prepareStatement(sqlQuery);
+
+				ps.setInt(1, invoice.getNum());
+				
+				ps.executeUpdate();
+				
+				success = true;
+
+			} catch (SQLException e) {
+				DBErrors.showError(e);
 			} finally {
 				try { ps.close(); }
 				catch (Exception e1) {}
@@ -1352,7 +1454,7 @@ public class OracleDB {
 				success = true;
 
 			} catch (SQLException e) {
-				e.printStackTrace();
+				DBErrors.showError(e);
 			} finally {
 				try { ps.close(); }
 				catch (Exception e1) {}
@@ -1397,7 +1499,7 @@ public class OracleDB {
 				}
 				
 			} catch (SQLException e) {
-				e.printStackTrace();
+				DBErrors.showError(e);
 			} finally {
 				try { rs.close(); ps.close(); }
 				catch (Exception e1) {}
@@ -1438,7 +1540,15 @@ public class OracleDB {
 					success = true;
 	
 				} catch (SQLException e) {
-					e.printStackTrace();
+					DBErrors.showError(e, line.getItem());
+					if (e.getErrorCode() == DBErrors.STOCK_QUANTITY) {
+						try { ps.close(); }
+						catch (Exception e1) {}
+						
+						deleteInvoiceLines(invoice);	// delete all lines that were added
+						return false;
+					}
+					
 				} finally {
 					try { ps.close(); }
 					catch (Exception e1) {}
@@ -1470,7 +1580,7 @@ public class OracleDB {
 				success = true;
 
 			} catch (SQLException e) {
-				e.printStackTrace();
+				DBErrors.showError(e);
 			} finally {
 				try { ps.close(); }
 				catch (Exception e1) {}
@@ -1502,7 +1612,7 @@ public class OracleDB {
 				success = true;
 
 			} catch (SQLException e) {
-				e.printStackTrace();
+				DBErrors.showError(e);
 			} finally {
 				try { ps.close(); }
 				catch (Exception e1) {}
@@ -1534,7 +1644,7 @@ public class OracleDB {
 				success = true;
 
 			} catch (SQLException e) {
-				e.printStackTrace();
+				DBErrors.showError(e);
 			} finally {
 				try { ps.close(); }
 				catch (Exception e1) {}
@@ -1566,7 +1676,7 @@ public class OracleDB {
 				success = true;
 
 			} catch (SQLException e) {
-				e.printStackTrace();
+				DBErrors.showError(e);
 			} finally {
 				try { ps.close(); }
 				catch (Exception e1) {}
@@ -1576,7 +1686,7 @@ public class OracleDB {
 		
 		return success;
 	}
-	
+		
 	public static java.sql.Date getCurrentDate() {
 	    java.util.Date today = new java.util.Date();
 	    return new java.sql.Date(today.getTime());

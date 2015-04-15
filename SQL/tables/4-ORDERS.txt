@@ -8,19 +8,6 @@ CREATE table "ORDERS" (
 )
 /
 
-CREATE sequence "ORDERS_SEQ" 
-/
-
-CREATE trigger "BI_ORDERS"  
-  before insert on "ORDERS"              
-  for each row 
-begin  
-  if :NEW."ORDER_NUM" is null then
-    select "ORDERS_SEQ".nextval into :NEW."ORDER_NUM" from dual;
-  end if;
-end;
-/   
-
 ALTER TABLE "ORDERS" ADD CONSTRAINT "ORDERS_CUSTOMER_FK" 
 FOREIGN KEY ("CUSTOMER_NUM")
 REFERENCES "CUSTOMERS" ("CUSTOMER_NUM")

@@ -1,0 +1,1 @@
+CREATE sequence "TRANSACTIONS_SEQ"

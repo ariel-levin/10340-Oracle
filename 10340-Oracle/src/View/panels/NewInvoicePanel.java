@@ -3,6 +3,7 @@ package view.panels;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+
 import javax.swing.BorderFactory;
 import javax.swing.JOptionPane;
 
@@ -96,6 +97,13 @@ public class NewInvoicePanel extends SalePanel {
 				
 				invoice_price += fprice;
 			}
+		}
+		
+		Item itemNotEnoughInStock = mainFrame.getDB().checkInvoiceLinesInStock(invoice);
+		if (itemNotEnoughInStock != null) {
+			String msg = "ERROR: Item " + itemNotEnoughInStock + " >> Not enough in stock..";
+			JOptionPane.showMessageDialog(null, msg, "Stock Error",JOptionPane.ERROR_MESSAGE);
+			return;
 		}
 		
 		invoice.setPrice(invoice_price * VAT);

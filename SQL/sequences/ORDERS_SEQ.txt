@@ -1,0 +1,1 @@
+CREATE sequence "ORDERS_SEQ"

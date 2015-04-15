@@ -55,7 +55,7 @@ public class DBErrors {
 	
 	private static void notEnoughInStock(Object obj) {
 		Item item = (Item)obj;
-		String msg = "Item " + item + " - not enough in stock..";
+		String msg = "ERROR: Item " + item + " >> Not enough in stock..";
 		JOptionPane.showMessageDialog(null,msg,"Stock Error",JOptionPane.ERROR_MESSAGE);
 	}
 	

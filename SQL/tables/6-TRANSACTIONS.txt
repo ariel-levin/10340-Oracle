@@ -9,19 +9,6 @@ CREATE table "TRANSACTIONS" (
 )
 /
 
-CREATE sequence "TRANSACTIONS_SEQ" 
-/
-
-CREATE trigger "BI_TRANSACTIONS"  
-  before insert on "TRANSACTIONS"              
-  for each row 
-begin  
-  if :NEW."TRANSACTION_NUM" is null then
-    select "TRANSACTIONS_SEQ".nextval into :NEW."TRANSACTION_NUM" from dual;
-  end if;
-end;
-/   
-
 ALTER TABLE "TRANSACTIONS" ADD CONSTRAINT "TRANSACTIONS_ITEM_FK" 
 FOREIGN KEY ("ITEM_NUM")
 REFERENCES "ITEMS" ("ITEM_NUM")

@@ -1,0 +1,8 @@
+CREATE table "ITEMS" (
+    "ITEM_NUM"   NUMBER NOT NULL,
+    "ITEM_NAME"  VARCHAR2(64) NOT NULL,
+    "ITEM_DESC"  VARCHAR2(1024),
+    "ITEM_PRICE" FLOAT NOT NULL,
+    "ITEM_IMG"   BLOB,
+    constraint  "ITEMS_PK" primary key ("ITEM_NUM")
+)

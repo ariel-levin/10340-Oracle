@@ -84,6 +84,13 @@ public class NewOrderPanel extends SalePanel {
 			}
 		}
 		
+		Item itemNotEnoughInStock = mainFrame.getDB().checkOrderLinesInStock(order);
+		if (itemNotEnoughInStock != null) {
+			String msg = "ERROR: Item " + itemNotEnoughInStock + " >> Not enough in stock..";
+			JOptionPane.showMessageDialog(null, msg, "Stock Error",JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
 		order.setPrice(order_price * VAT);
 
 		boolean success1 = mainFrame.getDB().addOrderLines(order);

@@ -3,12 +3,10 @@ package view.panels;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-
 import javax.swing.BorderFactory;
 import javax.swing.JOptionPane;
 
 import view.MainFrame;
-import view.utils.DBErrors;
 import model.*;
 
 
@@ -116,18 +114,15 @@ public class UpdateOrderPanel extends SalePanel {
 			boolean success2 = mainFrame.getDB().addOrderLines(order);
 			
 			if (success2) {
-				boolean success3 = mainFrame.getDB().updateOrderPrice(order.getNum(), order.getPrice());
+				boolean success3 = mainFrame.getDB().updateOrderPrice(order.getNum());
 				
 				if (success3) {
 					String msg = "The Order was updated successfully";
 					JOptionPane.showMessageDialog(null, msg, "Success",JOptionPane.INFORMATION_MESSAGE);
 					mainFrame.removePanel();
-				} else
-					DBErrors.showError();
+				}
 			}
-			
-		} else
-			DBErrors.showError();
+		}
 
 	}
 

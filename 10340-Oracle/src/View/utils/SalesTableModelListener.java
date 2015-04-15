@@ -56,11 +56,13 @@ public class SalesTableModelListener implements TableModelListener {
 		
 		if (item == null) {		// false selection
 			selectItemError(row, col);
+			clearRow(row);
 			return;
 		}
 		
 		if ( isItemAlreadyExist(item, row) ) {
 			itemAlreadyExistError(row, col);
+			clearRow(row);
 			return;
 		}
 		
@@ -107,18 +109,12 @@ public class SalesTableModelListener implements TableModelListener {
 	public void selectItemError(int row, int col) {
 		String msg = "ERROR: Item not selected\nPlease select an item first";
 		JOptionPane.showMessageDialog(null,msg,"Error",JOptionPane.ERROR_MESSAGE);
-		enableListener = false;
-		tableModel.setValueAt("", row, col);
-		enableListener = true;
 	}
 	
 	public void itemAlreadyExistError(int row, int col) {
 		String msg = "ERROR: Item already exist on table\n"
 				+ "Please select another item, or add to the existing one";
 		JOptionPane.showMessageDialog(null,msg,"Error",JOptionPane.ERROR_MESSAGE);
-		enableListener = false;
-		tableModel.setValueAt(null, row, col);
-		enableListener = true;
 	}
 	
 	public void checkInt(int row, int col, int def) {
@@ -201,6 +197,18 @@ public class SalesTableModelListener implements TableModelListener {
 				return true;
 		}
 		return false;
+	}
+	
+	private void clearRow(int row) {
+		enableListener = false;
+		try {
+			tableModel.setValueAt(null, row, SalePanel.ITEM_COL);
+			tableModel.setValueAt("", row, SalePanel.QUANTITY_COL);
+			tableModel.setValueAt("", row, SalePanel.PRICE_COL);
+			tableModel.setValueAt("", row, SalePanel.DISCOUNT_COL);
+			tableModel.setValueAt("", row, SalePanel.FPRICE_COL);
+		} catch (Exception e) {}
+		enableListener = true;
 	}
 	
 }

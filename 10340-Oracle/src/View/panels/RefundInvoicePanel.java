@@ -3,14 +3,12 @@ package view.panels;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.border.EmptyBorder;
 
 import view.MainFrame;
-import view.utils.DBErrors;
 import model.*;
 
 
@@ -133,14 +131,13 @@ public class RefundInvoicePanel extends SalePanel {
 		boolean success1 = mainFrame.getDB().addInvoiceLines(invoice);
 		
 		if (success1) {
-			boolean success2 = mainFrame.getDB().updateInvoicePrice(invoice.getNum(), invoice.getPrice());
+			boolean success2 = mainFrame.getDB().updateInvoicePrice(invoice.getNum());
 			
 			if (success2) {
 				String msg = "Source Invoice: " + refundInvoice.getNum() + " was refunded successfully\n"
 						+ "by Current Invoice: " + invoice.getNum();
 				JOptionPane.showMessageDialog(null, msg, "Success",JOptionPane.INFORMATION_MESSAGE);
-			} else
-				DBErrors.showError();
+			}
 		}
 
 		mainFrame.removePanel();

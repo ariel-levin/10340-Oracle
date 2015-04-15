@@ -3,13 +3,11 @@ package view.panels;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-
 import javax.swing.BorderFactory;
 import javax.swing.JOptionPane;
 
-import view.MainFrame;
-import view.utils.DBErrors;
 import model.*;
+import view.MainFrame;
 
 
 /**
@@ -111,22 +109,13 @@ public class NewInvoicePanel extends SalePanel {
 		boolean success1 = mainFrame.getDB().addInvoiceLines(invoice);
 
 		if (success1) {
-			boolean success2 = mainFrame.getDB().updateInvoicePrice(invoice.getNum(), invoice.getPrice());
+			boolean success2 = mainFrame.getDB().updateInvoicePrice(invoice.getNum());
 			
 			if (success2) {
-				boolean success3 = true;
-				if (invoice.getOrder() != null)
-					success3 = mainFrame.getDB().closeOrder(invoice.getOrder().getNum());
-				
-				if (success3) {
-					String msg = "The Invoice was commited successfully";
-					JOptionPane.showMessageDialog(null, msg, "Success",JOptionPane.INFORMATION_MESSAGE);
-					mainFrame.removePanel();
-				} else
-					DBErrors.showError();				
-				
-			} else 
-				DBErrors.showError();
+				String msg = "The Invoice was commited successfully";
+				JOptionPane.showMessageDialog(null, msg, "Success",JOptionPane.INFORMATION_MESSAGE);
+				mainFrame.removePanel();		
+			}
 
 		}
 

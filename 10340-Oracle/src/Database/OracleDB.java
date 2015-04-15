@@ -10,8 +10,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import javax.swing.JOptionPane;
 
-import view.utils.DBErrors;
 import model.*;
+import view.utils.DBErrors;
 
 
 /**
@@ -348,7 +348,8 @@ public class OracleDB {
 		
 		synchronized (connection) {
 			try {
-				String sqlQuery = "SELECT * FROM customers";
+				String sqlQuery = "SELECT * FROM customers "
+								+ "ORDER BY customer_num ASC";
 
 				ps = connection.prepareStatement(sqlQuery);
 				
@@ -382,7 +383,8 @@ public class OracleDB {
 		
 		synchronized (connection) {
 			try {
-				String sqlQuery = "SELECT * FROM items";
+				String sqlQuery = "SELECT * FROM items "
+								+ "ORDER BY item_num ASC";
 
 				ps = connection.prepareStatement(sqlQuery);
 				
@@ -415,7 +417,8 @@ public class OracleDB {
 		
 		synchronized (connection) {
 			try {
-				String sqlQuery = "SELECT * FROM warehouses";
+				String sqlQuery = "SELECT * FROM warehouses "
+								+ "ORDER BY wh_num ASC";
 
 				ps = connection.prepareStatement(sqlQuery);
 				
@@ -1341,8 +1344,8 @@ public class OracleDB {
 				try {
 					String sqlQuery = 	"INSERT INTO orders_lines "
 							+ "(order_num, line_num, item_num, line_quantity, line_price, "
-							+ "line_discount, line_final_price) "
-							+ "VALUES (?,?,?,?,?,?,?)";
+							+ "line_discount) "
+							+ "VALUES (?,?,?,?,?,?)";
 	
 					ps = connection.prepareStatement(sqlQuery);
 	
@@ -1352,7 +1355,6 @@ public class OracleDB {
 					ps.setInt(4, line.getQuantity());
 					ps.setFloat(5, line.getPrice());
 					ps.setInt(6, line.getDiscount());
-					ps.setFloat(7, line.getFinalPrice());
 					
 					ps.executeUpdate();
 					
@@ -1522,8 +1524,8 @@ public class OracleDB {
 				try {
 					String sqlQuery = 	"INSERT INTO invoice_lines "
 							+ "(invoice_num, line_num, item_num, line_quantity, line_price, "
-							+ "line_discount, line_final_price) "
-							+ "VALUES (?,?,?,?,?,?,?)";
+							+ "line_discount) "
+							+ "VALUES (?,?,?,?,?,?)";
 	
 					ps = connection.prepareStatement(sqlQuery);
 	
@@ -1533,7 +1535,6 @@ public class OracleDB {
 					ps.setInt(4, line.getQuantity());
 					ps.setFloat(5, line.getPrice());
 					ps.setInt(6, line.getDiscount());
-					ps.setFloat(7, line.getFinalPrice());
 					
 					ps.executeUpdate();
 					
@@ -1559,24 +1560,21 @@ public class OracleDB {
 		return success;
 	}
 	
-	public boolean updateInvoicePrice(int invoice_num, float invoice_price) {
+	public boolean updateInvoicePrice(int invoice_num) {
 		
 		boolean success = false;
 		
 		synchronized (connection) {
 
 			try {
-				String sqlQuery = "UPDATE invoice "
-						+ "SET invoice_price = ? "
-						+ "WHERE invoice_num = ? ";
+				String sqlQuery = "begin ARIEL.invoice_final_price(?); end;";
 
 				ps = connection.prepareStatement(sqlQuery);
 
-				ps.setFloat(1, invoice_price);
-				ps.setInt(2, invoice_num);
+				ps.setInt(1, invoice_num);
 
-				ps.executeUpdate();
-
+				ps.execute();
+				
 				success = true;
 
 			} catch (SQLException e) {
@@ -1591,21 +1589,18 @@ public class OracleDB {
 		return success;
 	}
 	
-	public boolean updateOrderPrice(int order_num, float order_price) {
+	public boolean updateOrderPrice(int order_num) {
 		
 		boolean success = false;
 		
 		synchronized (connection) {
 
 			try {
-				String sqlQuery = "UPDATE orders "
-						+ "SET order_price = ? "
-						+ "WHERE order_num = ? ";
+				String sqlQuery = "begin ARIEL.orders_final_price(?); end;";
 
 				ps = connection.prepareStatement(sqlQuery);
 
-				ps.setFloat(1, order_price);
-				ps.setInt(2, order_num);
+				ps.setInt(1, order_num);
 
 				ps.executeUpdate();
 

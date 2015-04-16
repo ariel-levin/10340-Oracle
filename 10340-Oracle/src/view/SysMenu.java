@@ -33,6 +33,7 @@ public class SysMenu extends JMenuBar {
 		this.mainFrame = mainFrame;
 				
 		createFileMenu();
+		createAddMenu();
 		createOrderMenu();
 		createInvoiceMenu();
 		createReportsMenu();
@@ -101,6 +102,43 @@ public class SysMenu extends JMenuBar {
 		orderMenu.add(cancelOrderItem);
 		
 		this.add(orderMenu);
+	}
+	
+	private void createAddMenu() {
+		
+		JMenu addMenu = new JMenu("Add");
+		
+		JMenuItem addCustomerItem = new JMenuItem("Add Customer");
+		addCustomerItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				new NewCustomerForm(mainFrame);
+			}
+		});
+		addMenu.add(addCustomerItem);
+		
+		JMenuItem addItemItem = new JMenuItem("Add Item");
+		addItemItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				new NewItemForm(mainFrame);
+			}
+		});
+		addMenu.add(addItemItem);
+		
+		JMenuItem addWarehouseItem = new JMenuItem("Add Warehouse");
+		addWarehouseItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				new NewWarehouseForm(mainFrame);
+			}
+		});
+		addMenu.add(addWarehouseItem);
+		
+		this.add(addMenu);
 	}
 	
 	private void createInvoiceMenu() {

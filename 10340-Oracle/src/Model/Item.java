@@ -31,6 +31,12 @@ public class Item {
 		this.price = price;
 		this.img = img;
 	}
+	
+	public Item(String name, String desc, float price) {
+		this.name = name;
+		this.desc = desc;
+		this.price = price;
+	}
 
 	
 	public int getNum() {

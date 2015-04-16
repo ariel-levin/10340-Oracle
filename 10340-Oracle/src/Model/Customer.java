@@ -33,6 +33,16 @@ public class Customer {
 		this.phone = phone;
 	}
 	
+	public Customer(String fname, String lname, int id, String street,
+			String city, String phone) {
+		this.fname = fname;
+		this.lname = lname;
+		this.id = id;
+		this.street = street;
+		this.city = city;
+		this.phone = phone;
+	}
+	
 
 	public int getNum() {
 		return num;

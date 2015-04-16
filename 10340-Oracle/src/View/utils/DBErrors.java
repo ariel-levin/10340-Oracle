@@ -19,6 +19,7 @@ import model.*;
  */
 public class DBErrors {
 
+	public static final int UNIQUE_CONSTRAINT = 00001;
 	public static final int STOCK_QUANTITY = 20001;
 	
 	
@@ -45,6 +46,10 @@ public class DBErrors {
 				notEnoughInStock(obj);
 				break;
 				
+			case UNIQUE_CONSTRAINT:
+				uniqueConstraint(obj);
+				break;
+				
 			default:
 				e.printStackTrace();
 				someError();
@@ -57,6 +62,11 @@ public class DBErrors {
 		Item item = (Item)obj;
 		String msg = "ERROR: Item " + item + " >> Not enough in stock..";
 		JOptionPane.showMessageDialog(null,msg,"Stock Error",JOptionPane.ERROR_MESSAGE);
+	}
+	
+	private static void uniqueConstraint(Object obj) {
+		String msg = "ERROR: Unique Constraint >> " + (String)obj + " already exists..";
+		JOptionPane.showMessageDialog(null,msg,"Unique Constraint Error",JOptionPane.ERROR_MESSAGE);
 	}
 	
 	private static void someError() {

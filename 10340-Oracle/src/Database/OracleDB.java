@@ -1237,6 +1237,108 @@ public class OracleDB {
 		return max;
 	}
 	
+	public boolean addNewCustomer(Customer c) {
+		
+		boolean success = false;
+		
+		synchronized (connection) {
+			try {
+				String sqlQuery = 	"INSERT INTO customers "
+						+ "(customer_fname, customer_lname, customer_id, customer_street, "
+						+ "customer_city, customer_phone) "
+						+ "VALUES (?,?,?,?,?,?)";
+
+				ps = connection.prepareStatement(sqlQuery);
+
+				ps.setString(1, c.getFname());
+				ps.setString(2, c.getLname());
+				ps.setInt(3, c.getId());
+				ps.setString(4, c.getStreet());
+				ps.setString(5, c.getCity());
+				ps.setString(6, c.getPhone());
+				
+				ps.executeUpdate();
+				
+				success = true;
+
+			} catch (SQLException e) {
+				if (e.getErrorCode() == DBErrors.UNIQUE_CONSTRAINT)
+					DBErrors.showError(e, "ID");
+				else
+					DBErrors.showError(e);
+			} finally {
+				try { ps.close(); }
+				catch (Exception e1) {}
+			}
+		}
+		
+		return success;
+	}
+
+	public boolean addNewItem(Item item) {
+		
+		boolean success = false;
+		
+		synchronized (connection) {
+			try {
+				String sqlQuery = 	"INSERT INTO items "
+						+ "(item_name, item_desc, item_price, item_img) "
+						+ "VALUES (?,?,?,?)";
+
+				ps = connection.prepareStatement(sqlQuery);
+
+				ps.setString(1, item.getName());
+				ps.setString(2, item.getDesc());
+				ps.setFloat(3, item.getPrice());
+				ps.setBlob(4, item.getImg());
+				
+				ps.executeUpdate();
+				
+				success = true;
+
+			} catch (SQLException e) {
+				DBErrors.showError(e);
+			} finally {
+				try { ps.close(); }
+				catch (Exception e1) {}
+			}
+		}
+		
+		return success;
+	}
+	
+	public boolean addNewWarehouse(Warehouse wh) {
+		
+		boolean success = false;
+		
+		synchronized (connection) {
+			try {
+				String sqlQuery = 	"INSERT INTO warehouses "
+						+ "(wh_name, wh_street, wh_city, wh_phone) "
+						+ "VALUES (?,?,?,?)";
+
+				ps = connection.prepareStatement(sqlQuery);
+
+				ps.setString(1, wh.getName());
+				ps.setString(2, wh.getStreet());
+				ps.setString(3, wh.getCity());
+				ps.setString(4, wh.getPhone());
+				
+				ps.executeUpdate();
+				
+				success = true;
+
+			} catch (SQLException e) {
+				DBErrors.showError(e);
+			} finally {
+				try { ps.close(); }
+				catch (Exception e1) {}
+			}
+		}
+		
+		return success;
+	}
+	
 	public boolean addNewOrder(Customer c) {
 		
 		boolean success = false;

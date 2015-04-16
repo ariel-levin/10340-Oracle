@@ -2,13 +2,11 @@ package view;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
-
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -68,7 +66,7 @@ public class MainFrame extends JFrame {
 
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		Dimension panelSize = new Dimension();
-		panelSize.setSize(screenSize.width * 0.6, screenSize.height * 0.6);
+		panelSize.setSize(screenSize.width * 0.7, screenSize.height * 0.7);
 		setSize(panelSize);
 		
 		getContentPane().setLayout(new BorderLayout());

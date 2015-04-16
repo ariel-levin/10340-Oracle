@@ -28,6 +28,14 @@ public class Warehouse {
 		this.city = city;
 		this.phone = phone;
 	}
+	
+	public Warehouse(String name, String street, String city,
+			String phone) {
+		this.name = name;
+		this.street = street;
+		this.city = city;
+		this.phone = phone;
+	}
 
 
 	public int getNum() {

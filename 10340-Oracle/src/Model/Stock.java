@@ -53,5 +53,11 @@ public class Stock {
 	public void setQuantity(int quantity) {
 		this.quantity = quantity;
 	}
+
+
+	@Override
+	public String toString() {
+		return item + " | " + warehouse	+ " | " + quantity;
+	}
 	
 }

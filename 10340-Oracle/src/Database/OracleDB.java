@@ -444,6 +444,42 @@ public class OracleDB {
 		return list;
 	}
 	
+	public ArrayList<Stock> getAllStockLines() {
+		
+		ResultSet rs = null;
+		ArrayList<Stock> list = new ArrayList<Stock>();
+		
+		synchronized (connection) {
+			try {
+				String sqlQuery = "SELECT * FROM stock "
+								+ "ORDER BY item_num ASC, wh_num ASC";
+
+				ps = connection.prepareStatement(sqlQuery);
+				
+				rs = ps.executeQuery();
+				
+				while (rs.next()) {
+					
+					int item_num = rs.getInt("item_num");
+					Item item = getItemByNum(item_num);
+					
+					int wh_num = rs.getInt("wh_num");
+					Warehouse wh = getWarehouseByNum(wh_num);
+					
+					list.add( new Stock( item, wh, rs.getInt("stock_quantity") ));
+				}
+							
+			} catch (SQLException e) {
+				DBErrors.showError(e);
+			} finally {
+				try { rs.close(); ps.close(); }
+				catch (Exception e1) {}
+			}
+		}
+		
+		return list;
+	}
+	
 	public ArrayList<Order> getAllOpenOrders() {
 		
 		ResultSet rs = null;
@@ -1323,6 +1359,72 @@ public class OracleDB {
 				ps.setString(2, wh.getStreet());
 				ps.setString(3, wh.getCity());
 				ps.setString(4, wh.getPhone());
+				
+				ps.executeUpdate();
+				
+				success = true;
+
+			} catch (SQLException e) {
+				DBErrors.showError(e);
+			} finally {
+				try { ps.close(); }
+				catch (Exception e1) {}
+			}
+		}
+		
+		return success;
+	}
+	
+	public boolean addNewStockLine(Stock stock) {
+		
+		boolean success = false;
+		
+		synchronized (connection) {
+			try {
+				String sqlQuery = 	"INSERT INTO stock "
+						+ "(item_num, wh_num, stock_quantity) "
+						+ "VALUES (?,?,?)";
+
+				ps = connection.prepareStatement(sqlQuery);
+
+				ps.setInt(1, stock.getItem().getNum());
+				ps.setInt(2, stock.getWarehouse().getNum());
+				ps.setInt(3, stock.getQuantity());
+				
+				ps.executeUpdate();
+				
+				success = true;
+
+			} catch (SQLException e) {
+				if (e.getErrorCode() == DBErrors.UNIQUE_CONSTRAINT)
+					DBErrors.showError(e, "A line with this Item and Warehouse");
+				else
+					DBErrors.showError(e);
+			} finally {
+				try { ps.close(); }
+				catch (Exception e1) {}
+			}
+		}
+		
+		return success;
+	}
+	
+	public boolean updateStockLine(Stock stock) {
+		
+		boolean success = false;
+		
+		synchronized (connection) {
+			try {
+				String sqlQuery = "UPDATE stock "
+						+ "SET stock_quantity = ? "
+						+ "WHERE item_num = ? "
+						+ "	AND wh_num = ?";
+
+				ps = connection.prepareStatement(sqlQuery);
+
+				ps.setInt(1, stock.getQuantity());
+				ps.setInt(2, stock.getItem().getNum());
+				ps.setInt(3, stock.getWarehouse().getNum());
 				
 				ps.executeUpdate();
 				

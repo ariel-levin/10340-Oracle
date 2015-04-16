@@ -60,12 +60,12 @@ public class DBErrors {
 	
 	private static void notEnoughInStock(Object obj) {
 		Item item = (Item)obj;
-		String msg = "ERROR: Item " + item + " >> Not enough in stock..";
+		String msg = "ERROR: Item " + item + " >> Not enough in stock";
 		JOptionPane.showMessageDialog(null,msg,"Stock Error",JOptionPane.ERROR_MESSAGE);
 	}
 	
 	private static void uniqueConstraint(Object obj) {
-		String msg = "ERROR: Unique Constraint >> " + (String)obj + " already exists..";
+		String msg = "ERROR: Unique Constraint >> " + (String)obj + " already exists";
 		JOptionPane.showMessageDialog(null,msg,"Unique Constraint Error",JOptionPane.ERROR_MESSAGE);
 	}
 	

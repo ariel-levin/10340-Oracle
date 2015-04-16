@@ -7,10 +7,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 import java.util.InputMismatchException;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -34,15 +36,16 @@ import model.*;
  * 			<br/><a href="mailto:matan.shulman87@gmail.com">matan.shulman87@gmail.com</a>
  *
  */
-public class NewWarehouseForm extends JFrame {
+public class UpdateStockForm extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	
-	private MainFrame 	mainFrame;
-	private JTextField 	txtname, txtstreet, txtcity, txtphone;
+	private MainFrame 				mainFrame;
+	private JTextField 				txtquantity;
+	private JComboBox<Stock> 		cb_stock;
 	
 
-	public NewWarehouseForm(MainFrame mainFrame) {
+	public UpdateStockForm(MainFrame mainFrame) {
 		
 		this.mainFrame = mainFrame;
 		
@@ -60,8 +63,8 @@ public class NewWarehouseForm extends JFrame {
 			}
 		});
 		
-		setTitle("New Warehouse");
-		setSize(new Dimension(250,280));
+		setTitle("Update Stock Line");
+		setSize(new Dimension(300,170));
 		
 		initFrame();
 		
@@ -80,44 +83,27 @@ public class NewWarehouseForm extends JFrame {
 		
 		pnlMain.add(Box.createRigidArea(new Dimension(0,10)));
 		
-		JLabel lblname = new JLabel("Warehouse Name (*)");
-		lblname.setAlignmentX(Component.CENTER_ALIGNMENT);
-		pnlMain.add(lblname);
-		pnlMain.add(Box.createRigidArea(new Dimension(0,5)));
-		txtname = new JTextField();
-		txtname.setAlignmentX(Component.CENTER_ALIGNMENT);
-		txtname.setHorizontalAlignment(JTextField.CENTER);
-		pnlMain.add(txtname);
-		pnlMain.add(Box.createRigidArea(new Dimension(0,10)));
+		ArrayList<Stock> stockLines = mainFrame.getDB().getAllStockLines();
+		cb_stock = new JComboBox<Stock>();
+		for (Stock s : stockLines)
+			cb_stock.addItem(s);
 		
-		JLabel lblstreet = new JLabel("Street");
-		lblstreet.setAlignmentX(Component.CENTER_ALIGNMENT);
-		pnlMain.add(lblstreet);
+		JLabel lblitem = new JLabel("Stock Line (*)");
+		lblitem.setAlignmentX(Component.CENTER_ALIGNMENT);
+		pnlMain.add(lblitem);
 		pnlMain.add(Box.createRigidArea(new Dimension(0,5)));
-		txtstreet = new JTextField();
-		txtstreet.setAlignmentX(Component.CENTER_ALIGNMENT);
-		txtstreet.setHorizontalAlignment(JTextField.CENTER);
-		pnlMain.add(txtstreet);
+		cb_stock.setAlignmentX(Component.CENTER_ALIGNMENT);
+		pnlMain.add(cb_stock);
 		pnlMain.add(Box.createRigidArea(new Dimension(0,10)));
-		
-		JLabel lblcity = new JLabel("City");
-		lblcity.setAlignmentX(Component.CENTER_ALIGNMENT);
-		pnlMain.add(lblcity);
+
+		JLabel lblquantity = new JLabel("Quantity (*)");
+		lblquantity.setAlignmentX(Component.CENTER_ALIGNMENT);
+		pnlMain.add(lblquantity);
 		pnlMain.add(Box.createRigidArea(new Dimension(0,5)));
-		txtcity = new JTextField();
-		txtcity.setAlignmentX(Component.CENTER_ALIGNMENT);
-		txtcity.setHorizontalAlignment(JTextField.CENTER);
-		pnlMain.add(txtcity);
-		pnlMain.add(Box.createRigidArea(new Dimension(0,10)));
-		
-		JLabel lblphone = new JLabel("Phone");
-		lblphone.setAlignmentX(Component.CENTER_ALIGNMENT);
-		pnlMain.add(lblphone);
-		pnlMain.add(Box.createRigidArea(new Dimension(0,5)));
-		txtphone = new JTextField();
-		txtphone.setAlignmentX(Component.CENTER_ALIGNMENT);
-		txtphone.setHorizontalAlignment(JTextField.CENTER);
-		pnlMain.add(txtphone);
+		txtquantity = new JTextField();
+		txtquantity.setAlignmentX(Component.CENTER_ALIGNMENT);
+		txtquantity.setHorizontalAlignment(JTextField.CENTER);
+		pnlMain.add(txtquantity);
 		pnlMain.add(Box.createRigidArea(new Dimension(0,10)));
 		
 		add(pnlMain, BorderLayout.CENTER);
@@ -135,11 +121,11 @@ public class NewWarehouseForm extends JFrame {
 		
 		btnCommit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Warehouse wh = getWarehouse();
-				if (wh != null) {
-					boolean success = mainFrame.getDB().addNewWarehouse(wh);
+				Stock stock = getStock();
+				if (stock != null) {
+					boolean success = mainFrame.getDB().updateStockLine(stock);
 					if (success) {
-						String msg = "The Warehouse was added successfully";
+						String msg = "The Stock Line was updated successfully";
 						JOptionPane.showMessageDialog(null, msg, "Success",JOptionPane.INFORMATION_MESSAGE);
 						dispose();
 					}
@@ -148,52 +134,42 @@ public class NewWarehouseForm extends JFrame {
 		});
 	}
 	
-	private Warehouse getWarehouse() {
+	private Stock getStock() {
 
-		String name = null, street = null, city = null, phone = null;
+		Stock stock = null;
+		int quantity = -1;
 		
 		try {
-			name = txtname.getText();
-			if (name.isEmpty())
+			stock = (Stock) cb_stock.getSelectedItem();
+			if (stock == null)
 				throw new Exception();
 		} catch (Exception e) {
-			String msg = "ERROR: Warehouse Name";
+			String msg = "ERROR: Stock Line not selected";
 			JOptionPane.showMessageDialog(null,msg,"Error",JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
 		
 		try {
-			if (!txtstreet.getText().isEmpty())
-				street = txtstreet.getText();
-		} catch (Exception e) {
-			String msg = "ERROR: Street";
+			if (txtquantity.getText().isEmpty())
+				throw new InputMismatchException("Must have a Quantity");
+			
+			quantity = Integer.parseInt(txtquantity.getText());
+			
+			if (quantity < 0)
+				throw new InputMismatchException("Quantity can't be Negative");
+			
+		} catch (NumberFormatException e) {
+			String msg = "ERROR: Quantity is not a number";
 			JOptionPane.showMessageDialog(null,msg,"Error",JOptionPane.ERROR_MESSAGE);
 			return null;
-		}
-		
-		try {
-			if (!txtcity.getText().isEmpty())
-				city = txtcity.getText();
-		} catch (Exception e) {
-			String msg = "ERROR: City";
-			JOptionPane.showMessageDialog(null,msg,"Error",JOptionPane.ERROR_MESSAGE);
-			return null;
-		}
-		
-		try {
-			if (!txtphone.getText().isEmpty()) {
-				phone = txtphone.getText();
-				
-				if (phone.length() < 9 || phone.length() > 11)
-					throw new InputMismatchException("Phone length is too short or too long");
-			}
 		} catch (InputMismatchException e) {
 			String msg = "ERROR: " + e.getMessage();
 			JOptionPane.showMessageDialog(null,msg,"Error",JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
 		
-		return new Warehouse(name, street, city, phone);
+		
+		return new Stock(stock.getItem(), stock.getWarehouse(), quantity);
 	}
 	
 }

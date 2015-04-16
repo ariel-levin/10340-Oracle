@@ -2,7 +2,6 @@ package view;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -34,6 +33,7 @@ public class SysMenu extends JMenuBar {
 				
 		createFileMenu();
 		createAddMenu();
+		createStockMenu();
 		createOrderMenu();
 		createInvoiceMenu();
 		createReportsMenu();
@@ -137,6 +137,33 @@ public class SysMenu extends JMenuBar {
 			}
 		});
 		addMenu.add(addWarehouseItem);
+		
+		this.add(addMenu);
+	}
+	
+	private void createStockMenu() {
+		
+		JMenu addMenu = new JMenu("Stock");
+		
+		JMenuItem addStockItem = new JMenuItem("Add Stock Line");
+		addStockItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				new NewStockForm(mainFrame);
+			}
+		});
+		addMenu.add(addStockItem);
+		
+		JMenuItem updateStockItem = new JMenuItem("Update Stock Line");
+		updateStockItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				new UpdateStockForm(mainFrame);
+			}
+		});
+		addMenu.add(updateStockItem);
 		
 		this.add(addMenu);
 	}

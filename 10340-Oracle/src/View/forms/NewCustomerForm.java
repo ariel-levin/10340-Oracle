@@ -38,8 +38,8 @@ public class NewCustomerForm extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	
-	private MainFrame mainFrame;
-	private JTextField txtfname, txtlname, txtid, txtstreet, txtcity, txtphone;
+	private MainFrame 	mainFrame;
+	private JTextField 	txtfname, txtlname, txtid, txtstreet, txtcity, txtphone;
 	
 
 	public NewCustomerForm(MainFrame mainFrame) {

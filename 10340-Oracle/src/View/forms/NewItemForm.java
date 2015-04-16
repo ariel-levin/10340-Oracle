@@ -38,8 +38,8 @@ public class NewItemForm extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	
-	private MainFrame mainFrame;
-	private JTextField txtname, txtdesc, txtprice;
+	private MainFrame 	mainFrame;
+	private JTextField 	txtname, txtdesc, txtprice;
 	
 
 	public NewItemForm(MainFrame mainFrame) {

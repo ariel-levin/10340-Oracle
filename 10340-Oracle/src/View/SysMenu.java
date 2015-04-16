@@ -202,7 +202,7 @@ public class SysMenu extends JMenuBar {
 		});
 		invoiceMenu.add(invoiceFromOrderItem);
 		
-		JMenuItem creditInvoiceItem = new JMenuItem("Credit Invoice");
+		JMenuItem creditInvoiceItem = new JMenuItem("Refund Invoice");
 		creditInvoiceItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

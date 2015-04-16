@@ -3,8 +3,11 @@ package view.panels;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+
 import javax.swing.BorderFactory;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.border.EmptyBorder;
 
 import model.*;
 import view.MainFrame;
@@ -56,6 +59,14 @@ public class NewInvoicePanel extends SalePanel {
 			}
 		});
 
+		if (invoice.getOrder() != null) {
+			northPanel.remove(northBtnPanel);
+			EmptyBorder border = new EmptyBorder(5, 50, 5, 0);
+			JLabel lblOrder = new JLabel("Order: " + invoice.getOrder().getNum());
+			lblOrder.setBorder(border);
+			northPanel.add(lblOrder);
+			northPanel.add(northBtnPanel);
+		}
 	}
 	
 	private void loadOrderLines() {

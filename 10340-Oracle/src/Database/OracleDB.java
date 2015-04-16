@@ -1448,15 +1448,11 @@ public class OracleDB {
 		synchronized (connection) {
 			try {
 				String sqlQuery = 	"INSERT INTO orders "
-						+ "(order_date, customer_num, order_price, order_status) "
-						+ "VALUES (?,?,?,?)";
+						+ "(customer_num) VALUES (?)";
 
 				ps = connection.prepareStatement(sqlQuery);
 
-				ps.setDate(1, getCurrentDate());
-				ps.setInt(2, c.getNum());
-				ps.setInt(3, 0);
-				ps.setString(4, "open");
+				ps.setInt(1, c.getNum());
 				
 				ps.executeUpdate();
 				
@@ -1480,14 +1476,11 @@ public class OracleDB {
 		synchronized (connection) {
 			try {
 				String sqlQuery = 	"INSERT INTO invoice "
-						+ "(invoice_date, customer_num, invoice_price) "
-						+ "VALUES (?,?,?)";
+						+ "(customer_num) VALUES (?)";
 
 				ps = connection.prepareStatement(sqlQuery);
 
-				ps.setDate(1, getCurrentDate());
-				ps.setInt(2, c.getNum());
-				ps.setInt(3, 0);
+				ps.setInt(1, c.getNum());
 				
 				ps.executeUpdate();
 				
@@ -1511,15 +1504,13 @@ public class OracleDB {
 		synchronized (connection) {
 			try {
 				String sqlQuery = 	"INSERT INTO invoice "
-						+ "(order_num, invoice_date, customer_num, invoice_price) "
-						+ "VALUES (?,?,?,?)";
+						+ "(order_num, customer_num) "
+						+ "VALUES (?,?)";
 
 				ps = connection.prepareStatement(sqlQuery);
 
 				ps.setInt(1, o.getNum());
-				ps.setDate(2, getCurrentDate());
-				ps.setInt(3, o.getCustomer().getNum());
-				ps.setFloat(4, o.getPrice());
+				ps.setInt(2, o.getCustomer().getNum());
 				
 				ps.executeUpdate();
 				

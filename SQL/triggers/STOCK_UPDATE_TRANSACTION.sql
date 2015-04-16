@@ -14,7 +14,7 @@ BEGIN
 	END IF;
 
 	INSERT INTO "ARIEL"."TRANSACTIONS" (TRANSACTION_DATE, ITEM_NUM, TRANSACTION_QUANTITY, TRANSACTION_TYPE, WH_NUM) 
-	VALUES (TO_DATE(SYSDATE, 'DD/MM/YYYY'), 
+	VALUES (ARIEL.get_date(), 
 			:NEW.item_num, 
 			ABS(:OLD.stock_quantity - :NEW.stock_quantity), 
 			trans_type, 
